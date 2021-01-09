@@ -50,4 +50,15 @@ public class MembershipAddedRequest {
     public void setContactInfo(ContactInfo contactInfo) {
         this.contactInfo = contactInfo;
     }
+
+    @Override
+    public String toString() {
+        return "MembershipAddedRequest{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", status=" + status +
+                ", profession=" + profession +
+                ", contactInfo=" + contactInfo +
+                '}';
+    }
 }
