@@ -12,7 +12,7 @@ public class Membership {
     private MemberProfession profession;
     private ContactInfo contactInfo;
     private List<MemberSkill> skills;
-    private HashMap<LocalDate, Long> paidInFeeDetails;
+    private List<MembershipFeeModel> paidInFeeDetails;
 
     public Membership(String name, int age, MemberStatus status, MemberProfession profession, ContactInfo contactInfo) {
         this.name = name;
@@ -87,11 +87,11 @@ public class Membership {
         this.skills = skills;
     }
 
-    public HashMap<LocalDate, Long> getPaidInFeeDetails() {
+    public List<MembershipFeeModel> getPaidInFeeDetails() {
         return paidInFeeDetails;
     }
 
-    public void setPaidInFeeDetails(HashMap<LocalDate, Long> paidInFeeDetails) {
+    public void setPaidInFeeDetails(List<MembershipFeeModel> paidInFeeDetails) {
         this.paidInFeeDetails = paidInFeeDetails;
     }
 

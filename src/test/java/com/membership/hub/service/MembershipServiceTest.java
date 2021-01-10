@@ -3,6 +3,7 @@ package com.membership.hub.service;
 import com.membership.hub.exception.MembershipExistsException;
 import com.membership.hub.model.*;
 import com.membership.hub.repository.ContactRepository;
+import com.membership.hub.repository.FeesRepository;
 import com.membership.hub.repository.MembershipRepository;
 
 import com.membership.hub.repository.SkillsRepository;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
 import org.mockito.junit.jupiter.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,8 @@ public class MembershipServiceTest {
     private ContactRepository contactRepository;
     @Mock
     private SkillsRepository skillsRepository;
+    @Mock
+    private FeesRepository feesRepository;
 
     @InjectMocks
     private MembershipService membershipService;
@@ -148,13 +152,18 @@ public class MembershipServiceTest {
         List<MemberSkill> listSkills = new ArrayList<>();
         listSkills.add(MemberSkill.CODING);
         listSkills.add(MemberSkill.MARKETING);
+        List<MembershipFeeModel> listFees = new ArrayList<>();
+        LocalDate date = LocalDate.parse("2020-02-12");
+        listFees.add(new MembershipFeeModel(date, 35.6));
 
         Membership existingMembership = existingMemberships.get(0);
         when(membershipRepository.findById(existingMembership.getId())).thenReturn(Optional.of(existingMembership));
         when(skillsRepository.findById(existingMembership.getId())).thenReturn(Optional.of(listSkills));
+        when(feesRepository.findById(existingMembership.getId())).thenReturn(Optional.of(listFees));
         Optional<Membership> result = membershipService.getMembership(existingMembership.getId());
         assertTrue(result.isPresent());
         assertNotNull(result.get().getSkills());
+        assertNotNull(result.get().getPaidInFeeDetails());
     }
 
     @Test
@@ -162,14 +171,52 @@ public class MembershipServiceTest {
         Membership existingMembership = existingMemberships.get(0);
         when(membershipRepository.findById(existingMembership.getId())).thenReturn(Optional.empty());
         when(skillsRepository.findById(existingMembership.getId())).thenReturn(Optional.empty());
+        when(feesRepository.findById(existingMembership.getId())).thenReturn(Optional.empty());
         Optional<Membership> result = membershipService.getMembership(existingMembership.getId());
         assertFalse(result.isPresent());
     }
 
     @Test
     public void getAllMembershipsTest() {
+        List<MemberSkill> listSkills = new ArrayList<>();
+        listSkills.add(MemberSkill.CODING);
+        listSkills.add(MemberSkill.MARKETING);
+        List<MembershipFeeModel> listFees = new ArrayList<>();
+        LocalDate date = LocalDate.parse("2020-02-12");
+        listFees.add(new MembershipFeeModel(date, 35.6));
+
+        existingMemberships.get(0).setSkills(listSkills);
+        existingMemberships.get(0).setPaidInFeeDetails(listFees);
+
         when(membershipRepository.findAll()).thenReturn(existingMemberships);
+        when(skillsRepository.findById(existingMemberships.get(0).getId())).thenReturn(Optional.of(listSkills));
+        when(feesRepository.findById(existingMemberships.get(0).getId())).thenReturn(Optional.of(listFees));
+        when(skillsRepository.findById(existingMemberships.get(1).getId())).thenReturn(Optional.empty());
+        when(feesRepository.findById(existingMemberships.get(1).getId())).thenReturn(Optional.empty());
+        when(skillsRepository.findById(existingMemberships.get(2).getId())).thenReturn(Optional.empty());
+        when(feesRepository.findById(existingMemberships.get(2).getId())).thenReturn(Optional.empty());
         List<Membership> result = membershipService.getMemberships();
         assertEquals(result, existingMemberships);
+    }
+
+    @Test
+    public void addSkillsToMemberTest() {
+        List<MemberSkill> listSkills = new ArrayList<>();
+        listSkills.add(MemberSkill.CODING);
+        listSkills.add(MemberSkill.MARKETING);
+
+        membershipService.addSkillsToMember(listSkills, membershipForComparing.getId());
+        verify(skillsRepository, times(1)).save(listSkills.get(0), membershipForComparing.getId());
+        verify(skillsRepository, times(1)).save(listSkills.get(1), membershipForComparing.getId());
+    }
+
+    @Test
+    public void addFeeToMemberTest() {
+        List<MembershipFeeModel> listFees = new ArrayList<>();
+        LocalDate date = LocalDate.parse("2020-02-12");
+        listFees.add(new MembershipFeeModel(date, 35.6));
+
+        membershipService.addFeeToMember(listFees, membershipForComparing.getId());
+        verify(feesRepository, times(1)).save(listFees.get(0), membershipForComparing.getId());
     }
 }

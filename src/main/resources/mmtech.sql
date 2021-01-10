@@ -95,15 +95,17 @@ SELECT name, skillName
 FROM membership
 JOIN skills USING (MEMBER_ID);	
 
-select *
-from skills
-where member_id = "4e48d7a8-64b9-4455-a37f-903fd62def32" 
-AND skillName = "QUALITYCONTROL";
+CREATE TABLE fees (
+	paidInDate char(10) NOT NULL,
+    paidInAmount DOUBLE NOT NULL,
+    member_id char(36) NOT NULL
+);
 
-select *
-from skills;
+DROP TABLE fees;
 
-truncate table skills;
+SELECT paidInDate, paidInAmount
+FROM fees
+WHERE member_id = "4e48d7a8-64b9-4455-a37f-903fd62def32";
 
 
 

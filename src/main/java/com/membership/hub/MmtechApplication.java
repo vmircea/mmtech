@@ -21,9 +21,9 @@ public class MmtechApplication {
      * 7. (DONE) Unit Testing for Membership service
      * 8. (DONE) Integration Testing for Membership service
      * 9. (DONE) ENDPOINTS for membership_skills: add skills
-     * 10. (NOT DONE) ENDPOINTS for membership fees: List of objects which contains paidInDate, paidInAmmount: AddNewAmmount
-     * 11. (NOT DONE) Fetch Members with all details including skills and fees => more repository => more services
-     * 12. (NOT DONE) Unit Testing for ...
+     * 10. (DONE) ENDPOINTS for membership fees: List of objects which contains paidInDate, paidInAmmount: AddNewAmmount
+     * 11. (DONE) Fetch Members with all details including skills and fees => more repository => more services
+     * 12. (DONE) Unit Testing for getMemberships, get and add skills, get and add fees
      * 13. (NOT DONE) ENDPOINTS for Branch  Model: create, getAll, getById
      * 14. (NOT DONE) Unit Testing for ...
      * 15. (NOT DONE) Implement Blacklist model + REST API + service + repo + DB. Do not allow adding new members if blacklisted
