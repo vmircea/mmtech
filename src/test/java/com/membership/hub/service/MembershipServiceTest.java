@@ -1,13 +1,11 @@
 package com.membership.hub.service;
 
 import com.membership.hub.exception.MembershipExistsException;
-import com.membership.hub.model.ContactInfo;
-import com.membership.hub.model.MemberProfession;
-import com.membership.hub.model.MemberStatus;
-import com.membership.hub.model.Membership;
+import com.membership.hub.model.*;
 import com.membership.hub.repository.ContactRepository;
 import com.membership.hub.repository.MembershipRepository;
 
+import com.membership.hub.repository.SkillsRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
@@ -27,6 +25,8 @@ public class MembershipServiceTest {
     private MembershipRepository membershipRepository;
     @Mock
     private ContactRepository contactRepository;
+    @Mock
+    private SkillsRepository skillsRepository;
 
     @InjectMocks
     private MembershipService membershipService;
@@ -60,6 +60,7 @@ public class MembershipServiceTest {
         // Contact and Membership entities to compare in the end:
         contactForComparing = new ContactInfo(1,"+40798787958", "@test.com", "Romania", "Bucharest", "Independentei 2", "2 C");
         membershipForComparing = new Membership("a2442fdc-2fg1-4f01-bbc5-bf434572v441g","Cristian Popescu", 13, MemberStatus.ACTIVE, MemberProfession.LAWYER, contactForComparing);
+        // MemberList to compare
 
         // Like a DatBase
         ContactInfo existingContactInfo1 = new ContactInfo(1, "+40784987589", "test1@test.com", "Romania", "Bucharest", "Aviatiei 13", "63 A");
@@ -144,16 +145,23 @@ public class MembershipServiceTest {
 
     @Test
     public void getMembershipTestHappyFlow() {
+        List<MemberSkill> listSkills = new ArrayList<>();
+        listSkills.add(MemberSkill.CODING);
+        listSkills.add(MemberSkill.MARKETING);
+
         Membership existingMembership = existingMemberships.get(0);
         when(membershipRepository.findById(existingMembership.getId())).thenReturn(Optional.of(existingMembership));
+        when(skillsRepository.findById(existingMembership.getId())).thenReturn(Optional.of(listSkills));
         Optional<Membership> result = membershipService.getMembership(existingMembership.getId());
         assertTrue(result.isPresent());
+        assertNotNull(result.get().getSkills());
     }
 
     @Test
     public void getMembershipTestNotExist() {
         Membership existingMembership = existingMemberships.get(0);
         when(membershipRepository.findById(existingMembership.getId())).thenReturn(Optional.empty());
+        when(skillsRepository.findById(existingMembership.getId())).thenReturn(Optional.empty());
         Optional<Membership> result = membershipService.getMembership(existingMembership.getId());
         assertFalse(result.isPresent());
     }

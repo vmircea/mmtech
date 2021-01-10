@@ -21,7 +21,7 @@ INSERT INTO membership VALUES (
     34,
     "ACTIVE",
     "DOCTOR",
-    2
+    8
 );
 INSERT INTO membership VALUES (
 	"67f30725-3993-432c-a778-d29fd3cf2d91",
@@ -29,7 +29,7 @@ INSERT INTO membership VALUES (
     21,
     "INACTIVE",
     "LAWYER",
-    3
+    9
 );
 
 CREATE TABLE CONTACTINFO (
@@ -44,6 +44,7 @@ CREATE TABLE CONTACTINFO (
 );
 DROP TABLE CONTACTINFO;
 ALTER TABLE contactinfo MODIFY COLUMN id int NOT NULL AUTO_INCREMENT;
+DELETE FROM contactinfo where id > 0;
 
 INSERT INTO CONTACTINFO VALUES (
 	null,
@@ -74,4 +75,35 @@ WHERE member_id = "4e48d7a8-64b9-4455-a37f-903fd62def32";
 SELECT m.member_id as id, m.name, m.age, m.status, m.profession, m.branch_id, c.phoneNumber, c.emailAddress, c.country, c.city, c.street, c.building
 FROM membership m
 JOIN contactinfo c ON (m.contactInfo_id = c.id);
+
+
+CREATE TABLE skills (
+	skillName char(50) NOT NULL,
+    MEMBER_ID char(36) NOT NULL
+);
+
+INSERT INTO skills VALUES (
+	"QUALITYCONTROL",
+    "4e48d7a8-64b9-4455-a37f-903fd62def32"
+);
+INSERT INTO skills VALUES (
+	"DIGITALMEDIA",
+    "4e48d7a8-64b9-4455-a37f-903fd62def32"
+);
+
+SELECT name, skillName
+FROM membership
+JOIN skills USING (MEMBER_ID);	
+
+select *
+from skills
+where member_id = "4e48d7a8-64b9-4455-a37f-903fd62def32" 
+AND skillName = "QUALITYCONTROL";
+
+select *
+from skills;
+
+truncate table skills;
+
+
 

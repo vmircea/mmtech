@@ -5,23 +5,17 @@ import com.membership.hub.model.MemberProfession;
 import com.membership.hub.model.MemberStatus;
 import com.membership.hub.model.Membership;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-public class MembershipRepository implements ApplicationRepository{
+public class MembershipRepository implements MembershipRepositoryInterface {
     private NamedParameterJdbcTemplate template;
 
     @Autowired
@@ -34,7 +28,7 @@ public class MembershipRepository implements ApplicationRepository{
         String sql =
                 "SELECT m.member_id, m.name, m.age, m.status, m.profession, m.contactInfo_id, c.phoneNumber, c.emailAddress, c.country, c.city, c.street, c.building\n" +
                 "FROM membership m\n" +
-                "JOIN contactinfo c ON (m.contactInfo_id = c.id);";
+                "JOIN contactinfo c ON (m.contactInfo_id = c.id)";
 
         return template.query(sql, basicMembershipMapper);
     }
@@ -74,6 +68,13 @@ public class MembershipRepository implements ApplicationRepository{
         }
 
         return membership;
+    }
+
+    @Override
+    public void deleteAll() {
+        MapSqlParameterSource parametersMembership = new MapSqlParameterSource();
+        String sql = "DELETE FROM membership WHERE MEMBER_ID > '0'";
+        template.update(sql, parametersMembership);
     }
 
     private final RowMapper<Membership> basicMembershipMapper = (resultSet, i) -> {

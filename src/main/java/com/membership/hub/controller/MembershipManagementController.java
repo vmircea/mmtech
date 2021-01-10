@@ -2,6 +2,7 @@ package com.membership.hub.controller;
 
 import com.membership.hub.dto.MembershipAddedRequest;
 import com.membership.hub.mapper.MembershipMapper;
+import com.membership.hub.model.MemberSkill;
 import com.membership.hub.model.Membership;
 import com.membership.hub.service.MembershipService;
 import org.springframework.http.ResponseEntity;
@@ -90,6 +91,32 @@ public class MembershipManagementController {
         }
         else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/skills/{id}")
+    public ResponseEntity<Void> addSkills(
+            @PathVariable String id,
+            @RequestBody List<MemberSkill> skillsRequest
+    ) {
+        Optional<Membership> existingMembership = membershipService.getMembership(id);
+        if(existingMembership.isPresent()) {
+            membershipService.addSkillsToMember(skillsRequest, id);
+            return ResponseEntity.noContent().build();
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("skills/{id}")
+    public ResponseEntity<List<MemberSkill>> getSkillsOfMember(@PathVariable String id) {
+        List<MemberSkill> list = membershipService.getSkillsById(id);
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        else {
+            return ResponseEntity.ok(list);
         }
     }
 }

@@ -46,5 +46,11 @@ public class ContactRepository {
         return contactInfo;
     }
 
+    public void deleteAll() {
+        MapSqlParameterSource parametersMembership = new MapSqlParameterSource();
+        String sql = "DELETE FROM contactinfo WHERE id > 0";
+        template.update(sql, parametersMembership);
+    }
+
 
 }
