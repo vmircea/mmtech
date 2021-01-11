@@ -1,14 +1,12 @@
 package com.membership.hub.service;
 
 import com.membership.hub.exception.MembershipExistsException;
-import com.membership.hub.model.ContactInfo;
-import com.membership.hub.model.MemberProfession;
-import com.membership.hub.model.MemberStatus;
-import com.membership.hub.model.Membership;
+import com.membership.hub.model.shared.ContactInfo;
+import com.membership.hub.model.membership.MemberProfession;
+import com.membership.hub.model.membership.MemberStatus;
+import com.membership.hub.model.membership.Membership;
 import com.membership.hub.repository.ContactRepository;
 import com.membership.hub.repository.MembershipRepository;
-import org.junit.After;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -42,7 +40,7 @@ public class MembersipServiceIntegrationTest {
     @Test
 //    @RepeatedTest(2)
     public void addMembershipHappyFlow() {
-        Membership membership = new Membership("Cristian Popescu", 13, MemberStatus.ACTIVE, MemberProfession.LAWYER,
+        Membership membership = new Membership("Cristian Popescu","UK-LDN-5645", 13, MemberStatus.ACTIVE, MemberProfession.LAWYER,
                 new ContactInfo("+40798787958", "@test.com", "Romania", "Bucharest", "Independentei 2", "2 C"));
 
         Membership createdMembership = service.createNewMembership(membership);
@@ -56,7 +54,7 @@ public class MembersipServiceIntegrationTest {
 
     @Test
     public void addMembershipNameOrPhoneNumberExists() {
-        Membership membership = new Membership("John Doe", 35, MemberStatus.ACTIVE, MemberProfession.DOCTOR,
+        Membership membership = new Membership("John Doe","UK-LDN-5645", 35, MemberStatus.ACTIVE, MemberProfession.DOCTOR,
                 new ContactInfo("+40759698745", "john.doe@gmail.com", "United Kingdom", "London", "ParkWay 23", "24"));
 
         MembershipExistsException exception = assertThrows(MembershipExistsException.class, () -> System.out.println(service.createNewMembership(membership)));

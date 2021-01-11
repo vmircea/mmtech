@@ -1,11 +1,12 @@
-package com.membership.hub.model;
+package com.membership.hub.model.membership;
 
-import java.time.LocalDate;
-import java.util.HashMap;
+import com.membership.hub.model.shared.ContactInfo;
+
 import java.util.List;
 
 public class Membership {
     private String id;
+    private String branchId;
     private String name;
     private int age;
     private MemberStatus status;
@@ -14,17 +15,19 @@ public class Membership {
     private List<MemberSkill> skills;
     private List<MembershipFeeModel> paidInFeeDetails;
 
-    public Membership(String name, int age, MemberStatus status, MemberProfession profession, ContactInfo contactInfo) {
+    public Membership(String name, String branchId, int age, MemberStatus status, MemberProfession profession, ContactInfo contactInfo) {
         this.name = name;
+        this.branchId = branchId;
         this.age = age;
         this.status = status;
         this.profession = profession;
         this.contactInfo = contactInfo;
     }
 
-    public Membership(String id, String name, int age, MemberStatus status, MemberProfession profession, ContactInfo contactInfo) {
+    public Membership(String id, String branchId, String name, int age, MemberStatus status, MemberProfession profession, ContactInfo contactInfo) {
         this.id = id;
         this.name = name;
+        this.branchId = branchId;
         this.age = age;
         this.status = status;
         this.profession = profession;
@@ -45,6 +48,14 @@ public class Membership {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(String branchId) {
+        this.branchId = branchId;
     }
 
     public int getAge() {
@@ -130,6 +141,7 @@ public class Membership {
     public String toString() {
         return "Membership{" +
                 "id='" + id + '\'' +
+                ", branchId='" + branchId + '\'' +
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 ", status=" + status +

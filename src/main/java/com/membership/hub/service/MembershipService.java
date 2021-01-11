@@ -1,13 +1,12 @@
 package com.membership.hub.service;
 
 import com.membership.hub.exception.MembershipExistsException;
-import com.membership.hub.model.MemberSkill;
-import com.membership.hub.model.Membership;
-import com.membership.hub.model.MembershipFeeModel;
-import com.membership.hub.repository.ContactRepository;
-import com.membership.hub.repository.FeesRepository;
-import com.membership.hub.repository.MembershipRepository;
-import com.membership.hub.repository.SkillsRepository;
+import com.membership.hub.model.branch.BranchModel;
+import com.membership.hub.model.membership.MemberSkill;
+import com.membership.hub.model.membership.Membership;
+import com.membership.hub.model.membership.MembershipFeeModel;
+import com.membership.hub.model.shared.PaymentModel;
+import com.membership.hub.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,12 +19,16 @@ public class MembershipService {
     private final ContactRepository contactRepository;
     private final SkillsRepository skillsRepository;
     private final FeesRepository feesRepository;
+    private final BranchRepository branchRepository;
+    private final PaymentsRepository paymentsRepository;
 
-    public MembershipService(MembershipRepository membershipRepository, ContactRepository contactRepository, SkillsRepository skillsRepository, FeesRepository feesRepository) {
+    public MembershipService(MembershipRepository membershipRepository, ContactRepository contactRepository, SkillsRepository skillsRepository, FeesRepository feesRepository, BranchRepository branchRepository, PaymentsRepository paymentsRepository) {
         this.membershipRepository = membershipRepository;
         this.contactRepository = contactRepository;
         this.skillsRepository = skillsRepository;
         this.feesRepository = feesRepository;
+        this.branchRepository = branchRepository;
+        this.paymentsRepository = paymentsRepository;
     }
 
     public Membership createNewMembership(Membership newMembership) {
@@ -60,13 +63,12 @@ public class MembershipService {
 
     public List<Membership> getMemberships() {
         List<Membership> listMembership = this.membershipRepository.findAll();
-        listMembership.forEach(membership -> {
-            List<MemberSkill> skills = this.getSkillsById(membership.getId());
-            List<MembershipFeeModel> fees = this.getFeesById(membership.getId());
-            membership.setSkills(skills);
-            membership.setPaidInFeeDetails(fees);
-        });
-        return listMembership;
+        return addSkillsAndFees(listMembership);
+    }
+
+    public List<Membership> getMembershipsByBranchId(String id) {
+        List<Membership> listMembership = membershipRepository.findAllByBranch(id);
+        return addSkillsAndFees(listMembership);
     }
 
     public boolean updateMembership(Membership membership) {
@@ -88,11 +90,41 @@ public class MembershipService {
         return existingSkills.orElse(null);
     }
 
-    public void addFeeToMember(List<MembershipFeeModel> newFeesAdded, String id) {
-        newFeesAdded.forEach(fee -> feesRepository.save(fee, id));
+    public void addFeeToMember(MembershipFeeModel newFeeAdded, String id) {
+        Optional<Membership> membership = this.getMembership(id);
+        if (membership.isPresent()) {
+            String branchId = membership.get().getBranchId();
+            Optional<BranchModel> existingBranch = branchRepository.findById(branchId);
+            if (existingBranch.isPresent()) {
+                String description = String.format("Paid monthly membership by %s into branch %s", membership.get().getName(), existingBranch.get().getBranchName());
+                PaymentModel memberToBranchTransaction = new PaymentModel(
+                        id,
+                        branchId,
+                        newFeeAdded.getPaidInAmount(),
+                        newFeeAdded.getPaidInDate(),
+                        description);
+                    paymentsRepository.save(memberToBranchTransaction);
+                    branchRepository.updateAmount(branchId, memberToBranchTransaction.getAmount());
+                    feesRepository.save(newFeeAdded, id);
+            }
+            else {
+                // TODO: throw Exception: Member does not belong to any branch
+            }
+            // TODO: throw Exception: Member Not Found
+        }
     }
     public List<MembershipFeeModel> getFeesById(String id) {
         Optional<List<MembershipFeeModel>> existingFees = feesRepository.findById(id);
         return existingFees.orElse(null);
+    }
+
+    private List<Membership> addSkillsAndFees(List<Membership> listMembership) {
+        listMembership.forEach(membership -> {
+            List<MemberSkill> skills = this.getSkillsById(membership.getId());
+            List<MembershipFeeModel> fees = this.getFeesById(membership.getId());
+            membership.setSkills(skills);
+            membership.setPaidInFeeDetails(fees);
+        });
+        return  listMembership;
     }
 }

@@ -16,6 +16,7 @@ CREATE TABLE MEMBERSHIP (
     status char(15),
     profession char(30),
     contactInfo_id int NOT NULL,
+    branch_id char(11) NOT NULL,
     PRIMARY KEY(member_id),
 	FOREIGN KEY (contactInfo_id) REFERENCES CONTACTINFO (id)
 );
@@ -36,5 +37,6 @@ INSERT INTO membership VALUES (
     34,
     'ACTIVE',
     'DOCTOR',
-    1
+    1,
+    'UK-LDN-5645'
 );

@@ -1,7 +1,6 @@
 package com.membership.hub.mapper;
 
-import com.membership.hub.dto.MembershipFeeRequest;
-import com.membership.hub.model.MembershipFeeModel;
+import com.membership.hub.model.membership.MembershipFeeModel;
 import org.springframework.stereotype.Component;
 
 @Component

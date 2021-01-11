@@ -1,6 +1,6 @@
 package com.membership.hub.repository;
 
-import com.membership.hub.model.ContactInfo;
+import com.membership.hub.model.shared.ContactInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

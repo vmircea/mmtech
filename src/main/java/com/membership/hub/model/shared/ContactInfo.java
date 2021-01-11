@@ -1,4 +1,4 @@
-package com.membership.hub.model;
+package com.membership.hub.model.shared;
 
 public class ContactInfo {
     private int id;

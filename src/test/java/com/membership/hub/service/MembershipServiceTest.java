@@ -1,7 +1,8 @@
 package com.membership.hub.service;
 
 import com.membership.hub.exception.MembershipExistsException;
-import com.membership.hub.model.*;
+import com.membership.hub.model.membership.*;
+import com.membership.hub.model.shared.ContactInfo;
 import com.membership.hub.repository.ContactRepository;
 import com.membership.hub.repository.FeesRepository;
 import com.membership.hub.repository.MembershipRepository;
@@ -52,18 +53,18 @@ public class MembershipServiceTest {
 
         // For case: Name already exists
         ContactInfo newContactInfoNoDuplicateNumber = new ContactInfo("+40798787958", "@test.com", "Romania", "Bucharest", "Independentei 2", "2 C");
-        newMembershipForAddedDuplicateName = new Membership("Matei Costin", 36, MemberStatus.ACTIVE, MemberProfession.IT, newContactInfoNoDuplicateNumber);
+        newMembershipForAddedDuplicateName = new Membership("Matei Costin", "UK-LDN-5645", 36, MemberStatus.ACTIVE, MemberProfession.IT, newContactInfoNoDuplicateNumber);
 
         // For case:  Phone number already exists
         ContactInfo newContactInfoDuplicateNumber = new ContactInfo("+40748798999", "test@test.com", "Romania", "Bucharest", "Aviatiei 29", "63 A");
-        newMembershipForAddedDuplicatePhoneNumber = new Membership("Matei Costin", 50 ,MemberStatus.ACTIVE, MemberProfession.DOCTOR, newContactInfoDuplicateNumber);
+        newMembershipForAddedDuplicatePhoneNumber = new Membership("Matei Costin", "UK-LDN-5645", 50 ,MemberStatus.ACTIVE, MemberProfession.DOCTOR, newContactInfoDuplicateNumber);
 
         //For case: Neither name or phone number exist in data base.
         // Membership entity to send on Service method:
-        newMembershipForAddedNoDuplicate = new Membership("Cristian Popescu", 13, MemberStatus.ACTIVE, MemberProfession.LAWYER, newContactInfoNoDuplicateNumber);
+        newMembershipForAddedNoDuplicate = new Membership("Cristian Popescu", "UK-LDN-5645", 13, MemberStatus.ACTIVE, MemberProfession.LAWYER, newContactInfoNoDuplicateNumber);
         // Contact and Membership entities to compare in the end:
         contactForComparing = new ContactInfo(1,"+40798787958", "@test.com", "Romania", "Bucharest", "Independentei 2", "2 C");
-        membershipForComparing = new Membership("a2442fdc-2fg1-4f01-bbc5-bf434572v441g","Cristian Popescu", 13, MemberStatus.ACTIVE, MemberProfession.LAWYER, contactForComparing);
+        membershipForComparing = new Membership("a2442fdc-2fg1-4f01-bbc5-bf434572v441g","Cristian Popescu","UK-LDN-5645", 13, MemberStatus.ACTIVE, MemberProfession.LAWYER, contactForComparing);
         // MemberList to compare
 
         // Like a DatBase
@@ -71,16 +72,16 @@ public class MembershipServiceTest {
         ContactInfo existingContactInfo2 = new ContactInfo(2, "+40748798999", "test2@test.com", "Romania", "Bucharest", "Aviatiei 13", "63 A");
         ContactInfo existingContactInfo3 = new ContactInfo(3, "+40796358748", "test3@test.com", "Romania", "Bucharest", "Mosilor 10", "23 A");
         existingMemberships = new ArrayList<>();
-        existingMemberships.add(new Membership("b9462fdc-2f01-4f02-bbc3-ba433572a411", "Matei Costin", 36, MemberStatus.INACTIVE, MemberProfession.DOCTOR, existingContactInfo1));
-        existingMemberships.add(new Membership("1a4f5a32-1c5d-4f90-a4cf-266d5f91f533","Matei Apetrei", 50 ,MemberStatus.ACTIVE, MemberProfession.DOCTOR, existingContactInfo2));
-        existingMemberships.add(new Membership("4baae4d7-bbb9-4a4b-a298-edd846fb7440","Alex Ciobanu", 40, MemberStatus.ACTIVE, MemberProfession.IT, existingContactInfo3));
+        existingMemberships.add(new Membership("b9462fdc-2f01-4f02-bbc3-ba433572a411","UK-LDN-5645", "Matei Costin",  36, MemberStatus.INACTIVE, MemberProfession.DOCTOR, existingContactInfo1));
+        existingMemberships.add(new Membership("1a4f5a32-1c5d-4f90-a4cf-266d5f91f533", "UK-LDN-5645", "Matei Apetrei",  50 ,MemberStatus.ACTIVE, MemberProfession.DOCTOR, existingContactInfo2));
+        existingMemberships.add(new Membership("4baae4d7-bbb9-4a4b-a298-edd846fb7440",  "UK-LDN-5645","Alex Ciobanu",  40, MemberStatus.ACTIVE, MemberProfession.IT, existingContactInfo3));
 
         // Membership and Contact for Update Happy Flow
         ContactInfo updatedContact = new ContactInfo(1, "+40755888111", "test1@test.com", "Romania", "Bucharest", "Aviatiei 13", "63 A");
-        updatedMembership = new Membership("b9462fdc-2f01-4f02-bbc3-ba433572a411", "Matei Costin", 37, MemberStatus.INACTIVE, MemberProfession.DOCTOR, updatedContact);
+        updatedMembership = new Membership("b9462fdc-2f01-4f02-bbc3-ba433572a411", "UK-LDN-5645", "Matei Costin", 37, MemberStatus.INACTIVE, MemberProfession.DOCTOR, updatedContact);
 
         // Membership and Contact for Update which is no longer in the database
-        updatedMembershipNotPresent = new Membership("b9462fdW-2f01-4f02-bbc3-ba433572a411", "Matei Costin", 37, MemberStatus.INACTIVE, MemberProfession.DOCTOR, updatedContact);
+        updatedMembershipNotPresent = new Membership("b9462fdW-2f01-4f02-bbc3-ba433572a411", "UK-LDN-5645", "Matei Costin",  37, MemberStatus.INACTIVE, MemberProfession.DOCTOR, updatedContact);
     }
 
     @Test
@@ -212,11 +213,9 @@ public class MembershipServiceTest {
 
     @Test
     public void addFeeToMemberTest() {
-        List<MembershipFeeModel> listFees = new ArrayList<>();
         LocalDate date = LocalDate.parse("2020-02-12");
-        listFees.add(new MembershipFeeModel(date, 35.6));
-
-        membershipService.addFeeToMember(listFees, membershipForComparing.getId());
-        verify(feesRepository, times(1)).save(listFees.get(0), membershipForComparing.getId());
+        MembershipFeeModel fee = new MembershipFeeModel(date, 35.6);
+        membershipService.addFeeToMember(fee, membershipForComparing.getId());
+        verify(feesRepository, times(1)).save(fee, membershipForComparing.getId());
     }
 }

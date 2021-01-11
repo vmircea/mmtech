@@ -24,14 +24,19 @@ public class MmtechApplication {
      * 10. (DONE) ENDPOINTS for membership fees: List of objects which contains paidInDate, paidInAmmount: AddNewAmmount
      * 11. (DONE) Fetch Members with all details including skills and fees => more repository => more services
      * 12. (DONE) Unit Testing for getMemberships, get and add skills, get and add fees
-     * 13. (NOT DONE) ENDPOINTS for Branch  Model: create, getAll, getById
-     * 14. (NOT DONE) Unit Testing for ...
-     * 15. (NOT DONE) Implement Blacklist model + REST API + service + repo + DB. Do not allow adding new members if blacklisted
-     * 16. (NOT DONE) Unit Testing for ...
-     * 17. (NOT DONE) Implement a new model called Project (id, name, description, List<skills>) + REST API + DB
-     * 18. (NOT DONE) Fetch all the members which have at least one skill associated with one project
-     * 19. (NOT DONE) Unit Testing for ...
-     * 20. (NOT DONE) Exception Handling: Return some JSON objects on Body and relevant HTTP response code in order to communicate well with front end
+     * 13. (DONE) ENDPOINTS for Branch  Model: create, getAll, getById
+     * 14. (DONE) Total amount of money per branch. Update when new amount is added by a member of that branch.
+     * 15. (DONE) Branch Transaction Model => Payments from total amount of money o a branch (Decrease total amount). Update new amount at every transaction. Make endpoint for that request.
+     * 16. (NOT DONE) Unit Testing for Branch. Integration Test for BranchService
+     * 17. (NOT DONE) Unit Testing for Payments. IT for PaymentService
+     * 18. (NOT DONE) Exception Handling: Return some JSON objects on Body and relevant HTTP response code in order to communicate well with front end
+     *
+     *
+     * 19. (NOT DONE) Implement Blacklist model + REST API + service + repo + DB. Do not allow adding new members if blacklisted
+     * 20. (NOT DONE) Unit Testing for Blacklist Service
+     * 21. (NOT DONE) Implement a new model called Project (id, name, description, List<MemberSkill>) + REST API + DB
+     * 22. (NOT DONE) Fetch all the members which have at least one skill associated with one project
+     * 23. (NOT DONE) Unit Testing for Project. Integration Test for ProjectService
      */
 
 }

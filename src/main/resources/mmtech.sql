@@ -7,6 +7,7 @@ CREATE TABLE MEMBERSHIP (
     status char(15),
     profession char(30),
     contactInfo_id int NOT NULL,
+    branch_id char(11) NOT NULL,
     PRIMARY KEY(member_id),
 	KEY `contactInfo_FK_id` (`contactInfo_id`),
 	CONSTRAINT `contactInfo_FK_id` FOREIGN KEY (`contactInfo_id`) REFERENCES `CONTACTINFO` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -21,7 +22,8 @@ INSERT INTO membership VALUES (
     34,
     "ACTIVE",
     "DOCTOR",
-    8
+    8,
+    "UK-LDN-5645"
 );
 INSERT INTO membership VALUES (
 	"67f30725-3993-432c-a778-d29fd3cf2d91",
@@ -29,7 +31,8 @@ INSERT INTO membership VALUES (
     21,
     "INACTIVE",
     "LAWYER",
-    9
+    9,
+    "UK-LDN-5645"
 );
 
 CREATE TABLE CONTACTINFO (
@@ -106,6 +109,17 @@ DROP TABLE fees;
 SELECT paidInDate, paidInAmount
 FROM fees
 WHERE member_id = "4e48d7a8-64b9-4455-a37f-903fd62def32";
+
+CREATE TABLE branches (
+	branch_id char(11) NOT NULL,
+    branch_name char(50) NOT NULL,
+    admin_id char(36),
+    contactInfo_id int NOT NULL,
+    totalAmount DOUBLE,
+    PRIMARY KEY(branch_id)
+);
+DROP TABLE branches;
+DESC branches;
 
 
 

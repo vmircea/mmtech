@@ -1,12 +1,13 @@
 package com.membership.hub.controller;
 
 import com.membership.hub.dto.MembershipAddedRequest;
-import com.membership.hub.dto.MembershipFeeRequest;
+import com.membership.hub.mapper.BranchModelMapper;
 import com.membership.hub.mapper.MembershipFeeMapper;
 import com.membership.hub.mapper.MembershipMapper;
-import com.membership.hub.model.MemberSkill;
-import com.membership.hub.model.Membership;
-import com.membership.hub.model.MembershipFeeModel;
+import com.membership.hub.model.branch.BranchModel;
+import com.membership.hub.model.membership.MemberSkill;
+import com.membership.hub.model.membership.Membership;
+import com.membership.hub.model.membership.MembershipFeeModel;
 import com.membership.hub.service.MembershipService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -53,14 +54,26 @@ public class MembershipManagementController {
         }
     }
 
+    @GetMapping("/members/byBranch/{id}")
+    public ResponseEntity<List<Membership>> getMembershipsByBranchId(@PathVariable String id) {
+        List<Membership> memberships = membershipService.getMembershipsByBranchId(id);
+
+        if (memberships.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        else {
+            return ResponseEntity.ok(memberships);
+        }
+    }
+
     @PostMapping("/members")
     public ResponseEntity<Membership> addNewMembership(
             @Valid
             @RequestBody MembershipAddedRequest memberRequest
     ) {
         Membership newMembership = this.membershipMapper.membershipRequestToMembership(memberRequest);
-        Membership createdMembership = this.membershipService.createNewMembership(newMembership);
 
+        Membership createdMembership = this.membershipService.createNewMembership(newMembership);
         return ResponseEntity
                 .created(URI.create("/membership/" + createdMembership.getId()))
                 .body(createdMembership);
@@ -134,9 +147,7 @@ public class MembershipManagementController {
         MembershipFeeModel newFeeAdded = this.membershipFeeMapper.membershipFeeRequestToMembershipFeeModel(paidInAmount);
         Optional<Membership> existingMembership = membershipService.getMembership(id);
         if(existingMembership.isPresent()) {
-            List<MembershipFeeModel> newFeesAdded = new ArrayList<>();
-            newFeesAdded.add(newFeeAdded);
-            membershipService.addFeeToMember(newFeesAdded, id);
+            membershipService.addFeeToMember(newFeeAdded, id);
             return ResponseEntity.noContent().build();
         }
         else {
@@ -144,7 +155,7 @@ public class MembershipManagementController {
         }
     }
 
-    @GetMapping("fees/{id}")
+    @GetMapping("/fees/{id}")
     public ResponseEntity<List<MembershipFeeModel>> getFeesOfMember(@PathVariable String id) {
         List<MembershipFeeModel> list = membershipService.getFeesById(id);
         if (list.isEmpty()) {

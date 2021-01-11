@@ -1,6 +1,6 @@
 package com.membership.hub.repository;
 
-import com.membership.hub.model.MembershipFeeModel;
+import com.membership.hub.model.membership.MembershipFeeModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

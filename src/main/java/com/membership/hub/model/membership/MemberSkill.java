@@ -1,4 +1,4 @@
-package com.membership.hub.model;
+package com.membership.hub.model.membership;
 
 public enum MemberSkill {
     QUALITYCONTROL, DIGITALMEDIA, NETWORKING, WEBANALYTICS, VIDEOCREATION, DESIGN, CODING, TESTING, MARKETING, RESEARCH, PHOTOSHOP, QATESTING, RISKMANAGEMENT,
