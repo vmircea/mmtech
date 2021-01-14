@@ -1,7 +1,5 @@
 package com.membership.hub.repository.members;
 
-import com.membership.hub.model.branch.BranchModel;
-import com.membership.hub.model.membership.MembershipFeeModel;
 import com.membership.hub.model.shared.ContactInfo;
 import com.membership.hub.model.membership.MemberProfession;
 import com.membership.hub.model.membership.MemberStatus;

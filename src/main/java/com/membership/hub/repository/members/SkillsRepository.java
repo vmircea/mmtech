@@ -25,8 +25,7 @@ public class SkillsRepository {
                 "SELECT skillName " +
                 "FROM skills " +
                 "WHERE member_id =:member_id";
-        List<Skills> list = template.query(sqlFetch, parameters, skillsMapper);
-        return list;
+        return template.query(sqlFetch, parameters, skillsMapper);
     }
 
     public void save(Skills skill, String id) {

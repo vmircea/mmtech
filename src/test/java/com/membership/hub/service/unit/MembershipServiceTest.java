@@ -51,9 +51,6 @@ public class MembershipServiceTest {
     private static Membership newMembershipForAddedNoDuplicate;
     private static Membership membershipForComparing;
     private static Membership updatedMembership;
-    private static Membership updatedMembershipNotPresent;
-
-    private static ContactInfo existingContactInfo1;
 
     private static ContactInfo contactForComparing;
 
@@ -88,7 +85,7 @@ public class MembershipServiceTest {
         // MemberList to compare
 
         // Like a DatBase
-        existingContactInfo1 = new ContactInfo(1, "+40784987589", "test1@test.com", "Romania", "Bucharest", "Aviatiei 13", "63 A");
+        ContactInfo existingContactInfo1 = new ContactInfo(1, "+40784987589", "test1@test.com", "Romania", "Bucharest", "Aviatiei 13", "63 A");
         ContactInfo existingContactInfo2 = new ContactInfo(2, "+40748798999", "test2@test.com", "Romania", "Bucharest", "Aviatiei 13", "63 A");
         ContactInfo existingContactInfo3 = new ContactInfo(3, "+40796358748", "test3@test.com", "Romania", "Bucharest", "Mosilor 10", "23 A");
         existingMemberships = new ArrayList<>();
@@ -107,7 +104,7 @@ public class MembershipServiceTest {
         updatedMembership = new Membership("b9462fdc-2f01-4f02-bbc3-ba433572a411",  "Matei Costin", "UK-LDN-5645",37, MemberStatus.INACTIVE, MemberProfession.DOCTOR, updatedContact);
 
         // Membership and Contact for Update which is no longer in the database
-        updatedMembershipNotPresent = new Membership("b9462fdW-2f01-4f02-bbc3-ba433572a411",  "Matei Costin", "UK-LDN-5645", 37, MemberStatus.INACTIVE, MemberProfession.DOCTOR, updatedContact);
+        Membership updatedMembershipNotPresent = new Membership("b9462fdW-2f01-4f02-bbc3-ba433572a411", "Matei Costin", "UK-LDN-5645", 37, MemberStatus.INACTIVE, MemberProfession.DOCTOR, updatedContact);
 
         // Skills
         listSkills = new ArrayList<>();
@@ -188,10 +185,8 @@ public class MembershipServiceTest {
     public void getMembershipTestNotExist() {
         Membership existingMembership = existingMemberships.get(0);
         when(membershipRepository.findById(existingMembership.getId())).thenReturn(Optional.empty());
-        when(skillsRepository.findById(existingMembership.getId())).thenReturn(emptySkillsList);
-        when(paymentsRepository.findAllMembershipFeesById(existingMembership.getId())).thenReturn(emptyFeesList);
-        Optional<Membership> result = membershipService.getMembership(existingMembership.getId());
-        assertFalse(result.isPresent());
+        MembershipException exception = assertThrows(MembershipException.class, () -> membershipService.getMembership(existingMembership.getId()));
+        assertEquals(MembershipException.MembershipErrors.MEMBERSHIP_NOT_FOUND, exception.getError());
     }
 
     @Test

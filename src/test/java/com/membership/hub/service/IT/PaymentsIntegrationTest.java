@@ -19,11 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -161,7 +157,7 @@ public class PaymentsIntegrationTest {
 
     @Test
     public void sendPaymentEnoughMoneyNoReceiverHappyFlow() {
-        Boolean result = service.sendPayment(transactionForBills, branchWithMoney);
+        boolean result = service.sendPayment(transactionForBills, branchWithMoney);
 
         assertTrue(result);
     }
@@ -204,7 +200,7 @@ public class PaymentsIntegrationTest {
 
     @Test
     public void sendPaymentFromBranchWithEnoughMoneyToAnotherBranchHappyFlow() {
-        Boolean result = service.sendPayment(transactionForBillsToAnotherBranch, branchWithMoney);
+        boolean result = service.sendPayment(transactionForBillsToAnotherBranch, branchWithMoney);
 
         assertTrue(result);
     }

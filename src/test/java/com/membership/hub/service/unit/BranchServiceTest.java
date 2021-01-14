@@ -118,7 +118,6 @@ public class BranchServiceTest {
         when(branchRepository.findById("TT-XXX-0000")).thenReturn(Optional.of(newBranchAlreadyExists));
         Optional<BranchModel> result = branchService.getBranch("TT-XXX-0000");
 
-        assertNotNull(result.get());
         assertTrue(result.isPresent());
         assertEquals(newBranchAlreadyExists.getBranchId(), result.get().getBranchId());
     }

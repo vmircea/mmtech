@@ -110,14 +110,13 @@ public class BranchRepository {
                 resultSet.getString("city"),
                 resultSet.getString("street"),
                 resultSet.getString("building"));
-        BranchModel branchFromDB = new BranchModel(
+        return new BranchModel(
                 resultSet.getString("branch_id"),
                 resultSet.getString("admin_id"),
                 resultSet.getString("branch_name"),
                 contactInfo,
                 resultSet.getDouble("totalAmount")
         );
-        return branchFromDB;
     };
 
 }

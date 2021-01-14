@@ -84,11 +84,10 @@ public class ProjectService {
                             .anyMatch(eachSkillOfMember -> existingProject.get().getSkills().contains(eachSkillOfMember));
                     if (memberHasRequiredSkills) {
                         if (this.projectMembersRepository.save(memberId, projectId)) {
-                            String toReturn = String.format(
+                            return String.format(
                                     "Member with name %s was added to project with name %s",
                                     existingMembership.get().getName(),
                                     existingProject.get().getName());
-                            return toReturn;
                         }
                         else {
                             throw ProjectException.noMemberWasAddedBecauseAlreadyExists();

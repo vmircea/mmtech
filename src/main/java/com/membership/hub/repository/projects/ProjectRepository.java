@@ -66,24 +66,20 @@ public class ProjectRepository {
         }
     }
 
-    private final RowMapper<ProjectModel> projectMapperForFetchAll = ((resultSet, i) -> {
-        return new ProjectModel(
-                resultSet.getString("project_id"),
-                resultSet.getString("name"),
-                ProjectStatus.valueOf(resultSet.getString("status"))
-        );
-    });
+    private final RowMapper<ProjectModel> projectMapperForFetchAll = ((resultSet, i) -> new ProjectModel(
+            resultSet.getString("project_id"),
+            resultSet.getString("name"),
+            ProjectStatus.valueOf(resultSet.getString("status"))
+    ));
 
 
-    private final RowMapper<ProjectModel> projectMapper = ((resultSet, i) -> {
-        return new ProjectModel(
-                resultSet.getString("project_id"),
-                resultSet.getString("name"),
-                ProjectStatus.valueOf(resultSet.getString("status")),
-                resultSet.getString("description"),
-                resultSet.getDouble("amount")
-        );
-    });
+    private final RowMapper<ProjectModel> projectMapper = ((resultSet, i) -> new ProjectModel(
+            resultSet.getString("project_id"),
+            resultSet.getString("name"),
+            ProjectStatus.valueOf(resultSet.getString("status")),
+            resultSet.getString("description"),
+            resultSet.getDouble("amount")
+    ));
 
     public Optional<String> delete(String id) {
         MapSqlParameterSource parameters = new MapSqlParameterSource().addValue("project_id", id);

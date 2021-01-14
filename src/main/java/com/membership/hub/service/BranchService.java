@@ -26,13 +26,11 @@ public class BranchService {
         }
         ContactInfo savedContactInfo = this.contactRepository.save(newBranch.getContactInfo());
         newBranch.setContactInfo(savedContactInfo);
-        BranchModel savedBranch = this.branchRepository.save(newBranch);
-        return savedBranch;
+        return this.branchRepository.save(newBranch);
     }
 
     public Optional<BranchModel> getBranch(String id) {
-        Optional<BranchModel> existingBranch = branchRepository.findById(id);
-        return existingBranch;
+        return branchRepository.findById(id);
     }
 
     public List<BranchModel> getBranches() {

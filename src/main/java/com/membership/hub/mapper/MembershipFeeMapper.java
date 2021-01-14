@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class MembershipFeeMapper {
     public MembershipFeeModel membershipFeeRequestToMembershipFeeModel(Double paidInAmount) {
-        MembershipFeeModel membershipFeeModel = new MembershipFeeModel(paidInAmount);
-        return membershipFeeModel;
+        return new MembershipFeeModel(paidInAmount);
     }
 }

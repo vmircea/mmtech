@@ -1,7 +1,5 @@
 package com.membership.hub.security;
 
-import java.util.Base64;
-
 public class Credentials {
     public static final String AUTHORIZATION = "Authorization";
 

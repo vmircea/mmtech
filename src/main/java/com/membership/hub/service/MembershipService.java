@@ -55,7 +55,9 @@ public class MembershipService {
 
     public Optional<Membership> getMembership(String id) {
         Optional<Membership> membership = this.membershipRepository.findById(id);
-
+        if(membership.isEmpty()) {
+            throw MembershipException.membershipNotFound();
+        }
         List<Skills> skills = this.getSkillsById(id);
         if(!skills.isEmpty()) {
             membership.get().setSkills(skills);

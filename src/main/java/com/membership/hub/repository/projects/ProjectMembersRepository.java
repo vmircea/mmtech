@@ -1,6 +1,5 @@
 package com.membership.hub.repository.projects;
 
-import com.membership.hub.model.branch.BranchModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -41,7 +40,5 @@ public class ProjectMembersRepository {
         return template.query(sqlFind, parameters, projectMembersMapper);
     }
 
-    private final RowMapper<String> projectMembersMapper = (resultSet, i) -> {
-        return resultSet.getString("member_id");
-    };
+    private final RowMapper<String> projectMembersMapper = (resultSet, i) -> resultSet.getString("member_id");
 }

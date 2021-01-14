@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class PaymentsRepository {
@@ -53,8 +52,7 @@ public class PaymentsRepository {
 
         String sqlFindAllFees = "SELECT date, amount FROM payments WHERE sender_id=:memberId;";
 
-        List<MembershipFeeModel> fees = template.query(sqlFindAllFees, parameters, feeMapper);
-        return fees;
+        return template.query(sqlFindAllFees, parameters, feeMapper);
     }
 
     private final RowMapper<PaymentModel> paymentMapper = (resultSet, i) -> new PaymentModel(
