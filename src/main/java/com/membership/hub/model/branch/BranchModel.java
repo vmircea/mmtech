@@ -56,6 +56,8 @@ public class BranchModel {
         this.branchAmount = branchAmount;
     }
 
+
+
     @Override
     public String toString() {
         return "BranchModel{" +

@@ -1,12 +1,11 @@
-package com.membership.hub.service;
+package com.membership.hub.service.IT;
 
-import com.membership.hub.exception.MembershipExistsException;
+import com.membership.hub.exception.MembershipException;
 import com.membership.hub.model.shared.ContactInfo;
 import com.membership.hub.model.membership.MemberProfession;
 import com.membership.hub.model.membership.MemberStatus;
 import com.membership.hub.model.membership.Membership;
-import com.membership.hub.repository.ContactRepository;
-import com.membership.hub.repository.MembershipRepository;
+import com.membership.hub.service.MembershipService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,15 +19,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase
 @TestPropertySource(locations = "classpath:application-test.properties")
-public class MembersipServiceIntegrationTest {
+public class MembershipServiceIntegrationTest {
 
     @Autowired
     private MembershipService service;
 
-    @Autowired
-    private MembershipRepository membershipRepository;
-    @Autowired
-    private ContactRepository contactRepository;
+//    @Autowired
+//    private MembershipRepository membershipRepository;
+//    @Autowired
+//    private ContactRepository contactRepository;
 
 //    @AfterEach
 //    public void tearDown() {
@@ -42,14 +41,15 @@ public class MembersipServiceIntegrationTest {
     public void addMembershipHappyFlow() {
         Membership membership = new Membership("Cristian Popescu","UK-LDN-5645", 13, MemberStatus.ACTIVE, MemberProfession.LAWYER,
                 new ContactInfo("+40798787958", "@test.com", "Romania", "Bucharest", "Independentei 2", "2 C"));
-
+        Membership membershipExpected = new Membership("Cristian Popescu","UK-LDN-5645", 13, MemberStatus.ACTIVE, MemberProfession.LAWYER,
+                new ContactInfo("+40798787958", "@test.com", "Romania", "Bucharest", "Independentei 2", "2 C"));
         Membership createdMembership = service.createNewMembership(membership);
 
         assertNotNull(createdMembership.getId());
-        assertEquals(createdMembership.getName(), membership.getName());
-        assertEquals(createdMembership.getStatus(), membership.getStatus());
-        assertEquals(createdMembership.getProfession(), membership.getProfession());
-        assertEquals(createdMembership.getContactInfo().getId(), membership.getContactInfo().getId());
+        assertEquals(membershipExpected.getName(), createdMembership.getName());
+        assertEquals(membershipExpected.getStatus(), createdMembership.getStatus());
+        assertEquals(membershipExpected.getProfession(), createdMembership.getProfession());
+        assertEquals(membershipExpected.getContactInfo().getId(), createdMembership.getContactInfo().getId());
     }
 
     @Test
@@ -57,8 +57,8 @@ public class MembersipServiceIntegrationTest {
         Membership membership = new Membership("John Doe","UK-LDN-5645", 35, MemberStatus.ACTIVE, MemberProfession.DOCTOR,
                 new ContactInfo("+40759698745", "john.doe@gmail.com", "United Kingdom", "London", "ParkWay 23", "24"));
 
-        MembershipExistsException exception = assertThrows(MembershipExistsException.class, () -> System.out.println(service.createNewMembership(membership)));
+        MembershipException exception = assertThrows(MembershipException.class, () -> service.createNewMembership(membership));
 
-        assertEquals("This name or phoneName already exists in the database", exception.getMessage());
+        assertEquals(MembershipException.MembershipErrors.MEMBERSHIP_ALREADY_EXISTS, exception.getError());
     }
 }

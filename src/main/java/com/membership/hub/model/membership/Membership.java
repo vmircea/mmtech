@@ -24,7 +24,7 @@ public class Membership {
         this.contactInfo = contactInfo;
     }
 
-    public Membership(String id, String branchId, String name, int age, MemberStatus status, MemberProfession profession, ContactInfo contactInfo) {
+    public Membership(String id, String name, String branchId, int age, MemberStatus status, MemberProfession profession, ContactInfo contactInfo) {
         this.id = id;
         this.name = name;
         this.branchId = branchId;
@@ -54,16 +54,8 @@ public class Membership {
         return branchId;
     }
 
-    public void setBranchId(String branchId) {
-        this.branchId = branchId;
-    }
-
     public int getAge() {
         return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     public MemberStatus getStatus() {
@@ -76,10 +68,6 @@ public class Membership {
 
     public MemberProfession getProfession() {
         return profession;
-    }
-
-    public void setProfession(MemberProfession profession) {
-        this.profession = profession;
     }
 
     public ContactInfo getContactInfo() {

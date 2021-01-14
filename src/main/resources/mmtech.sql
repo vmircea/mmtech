@@ -98,18 +98,6 @@ SELECT name, skillName
 FROM membership
 JOIN skills USING (MEMBER_ID);	
 
-CREATE TABLE fees (
-	paidInDate char(10) NOT NULL,
-    paidInAmount DOUBLE NOT NULL,
-    member_id char(36) NOT NULL
-);
-
-DROP TABLE fees;
-
-SELECT paidInDate, paidInAmount
-FROM fees
-WHERE member_id = "4e48d7a8-64b9-4455-a37f-903fd62def32";
-
 CREATE TABLE branches (
 	branch_id char(11) NOT NULL,
     branch_name char(50) NOT NULL,
@@ -120,6 +108,17 @@ CREATE TABLE branches (
 );
 DROP TABLE branches;
 DESC branches;
+
+CREATE TABLE payments (
+	transaction_no int NOT NULL auto_increment,
+    sender_id char(36) NOT NULL,
+    receiver_id char(11),
+    amount DOUBLE,
+    date char(10) NOT NULL,
+    description char(150),
+    PRIMARY KEY(transaction_no)
+);
+DROP TABLE payments;
 
 
 

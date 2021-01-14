@@ -4,6 +4,8 @@ import com.membership.hub.dto.BranchRequest;
 import com.membership.hub.mapper.BranchModelMapper;
 import com.membership.hub.model.branch.BranchModel;
 import com.membership.hub.service.BranchService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,8 @@ import java.util.Optional;
 @RestController
 @Validated
 @RequestMapping("/branch")
+@Api(value = "/branch",
+        tags = "Branches")
 public class BranchController {
     private final BranchModelMapper branchModelMapper;
     private final BranchService branchService;
@@ -28,6 +32,8 @@ public class BranchController {
     /**
      * Branch ENDPOINTS: newBranch, getBranch, new payments, get payments
      */
+    @ApiOperation(value = "Create a new Branch",
+            notes = "Create a new branch based on the information received in the request")
     @PostMapping
     public ResponseEntity<BranchModel> createBranch(
             @Valid
@@ -41,6 +47,8 @@ public class BranchController {
                 .body(savedBranch);
     }
 
+    @ApiOperation(value = "Get a Branch by ID",
+            notes = "Fetch a branch with all details from the DataBase based on its ID")
     @GetMapping("/{id}")
     public ResponseEntity<BranchModel> getBranch(@PathVariable String id) {
         Optional<BranchModel> existingBranch = branchService.getBranch(id);
@@ -48,6 +56,8 @@ public class BranchController {
         return existingBranch.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @ApiOperation(value = "Get all Branches details from DB",
+            notes = "Fetch all branches with all details from the DataBase.")
     @GetMapping
     public ResponseEntity<List<BranchModel>> getBranches() {
         List<BranchModel> branchesList = branchService.getBranches();
@@ -60,6 +70,8 @@ public class BranchController {
         }
     }
 
+    @ApiOperation(value = "Delete a Branch by ID",
+            notes = "Delete a branch from the DataBase based on its ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<BranchModel> deleteBranch(@PathVariable String id) {
         Optional<BranchModel> existingBranch = branchService.deleteBranch(id);

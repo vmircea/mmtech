@@ -1,4 +1,4 @@
-package com.membership.hub.repository;
+package com.membership.hub.repository.shared;
 
 import com.membership.hub.model.shared.ContactInfo;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,7 @@
-package com.membership.hub.repository;
+package com.membership.hub.repository.members;
 
+import com.membership.hub.model.branch.BranchModel;
+import com.membership.hub.model.membership.MembershipFeeModel;
 import com.membership.hub.model.shared.ContactInfo;
 import com.membership.hub.model.membership.MemberProfession;
 import com.membership.hub.model.membership.MemberStatus;
@@ -50,8 +52,8 @@ public class MembershipRepository {
                 "FROM membership m\n" +
                 "JOIN contactinfo c ON (m.contactInfo_id = c.id)\n" +
                 "WHERE member_id = :member_id";
-        Membership membership = template.queryForObject(sql, parameters, basicMembershipMapper);
-        return membership != null ? Optional.of(membership) : Optional.empty();
+        List<Membership> fetchedMember = template.query(sql, parameters, basicMembershipMapper);
+        return getMembershipFromResultSet(fetchedMember);
     }
 
     public Membership save(Membership membership) {
@@ -85,6 +87,15 @@ public class MembershipRepository {
         template.update(sql, parametersMembership);
     }
 
+    private Optional<Membership> getMembershipFromResultSet(List<Membership> members) {
+        if (members  != null && !members.isEmpty()) {
+            return Optional.of(members.get(0));
+        }
+        else {
+            return Optional.empty();
+        }
+    }
+
     private final RowMapper<Membership> basicMembershipMapper = (resultSet, i) -> {
         ContactInfo contactInfo = new ContactInfo(
                 resultSet.getInt("contactInfo_id"),
@@ -96,8 +107,8 @@ public class MembershipRepository {
                 resultSet.getString("building"));
         return new Membership(
                 resultSet.getString("member_id"),
-                resultSet.getString("branch_id"),
                 resultSet.getString("name"),
+                resultSet.getString("branch_id"),
                 resultSet.getInt("age"),
                 MemberStatus.valueOf(resultSet.getString("status")),
                 MemberProfession.valueOf(resultSet.getString("profession")),

@@ -1,5 +1,6 @@
 package com.membership.hub.repository;
 
+import com.membership.hub.model.membership.MembershipFeeModel;
 import com.membership.hub.model.shared.PaymentModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class PaymentsRepository {
@@ -32,8 +34,11 @@ public class PaymentsRepository {
                 .addValue("date", transaction.getDate())
                 .addValue("description", transaction.getDescription());
 
-        template.update(sqlSave, parameters);
-        return transaction;
+        int count = template.update(sqlSave, parameters);
+        if (count == 1) {
+            return transaction;
+        }
+        return null;
     }
 
     public List<PaymentModel> findAllById(String id) {
@@ -43,12 +48,27 @@ public class PaymentsRepository {
         return template.query(sqlFindAll, parameters, paymentMapper);
     }
 
-    private final RowMapper<PaymentModel> paymentMapper = (resultSet, i) -> {
-        return new PaymentModel(
-                resultSet.getString("sender_id"),
-                resultSet.getString("receiver_id"),
-                resultSet.getDouble("amount"),
-                LocalDate.parse(resultSet.getString("date")),
-                resultSet.getString("description"));
+    public List<MembershipFeeModel> findAllMembershipFeesById(String id) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource().addValue("memberId", id);
+
+        String sqlFindAllFees = "SELECT date, amount FROM payments WHERE sender_id=:memberId;";
+
+        List<MembershipFeeModel> fees = template.query(sqlFindAllFees, parameters, feeMapper);
+        return fees;
+    }
+
+    private final RowMapper<PaymentModel> paymentMapper = (resultSet, i) -> new PaymentModel(
+            resultSet.getString("sender_id"),
+            resultSet.getString("receiver_id"),
+            resultSet.getDouble("amount"),
+            LocalDate.parse(resultSet.getString("date")),
+            resultSet.getString("description"));
+
+    private final RowMapper<MembershipFeeModel> feeMapper = (resultSet, i) -> {
+        LocalDate date = LocalDate.parse(resultSet.getString("date"));
+        Double amount = resultSet.getDouble("amount");
+        return new MembershipFeeModel(date, amount);
     };
+
+
 }

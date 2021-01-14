@@ -1,9 +1,10 @@
 package com.membership.hub.service;
 
+import com.membership.hub.exception.BranchException;
 import com.membership.hub.model.branch.BranchModel;
 import com.membership.hub.model.shared.ContactInfo;
 import com.membership.hub.repository.BranchRepository;
-import com.membership.hub.repository.ContactRepository;
+import com.membership.hub.repository.shared.ContactRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +21,9 @@ public class BranchService {
     }
 
     public BranchModel createNewBranch(BranchModel newBranch) {
-        // TODO: Code for already existing branch. Looking after Id. Implement findAll() first in Repository.
+        if (branchRepository.findAll().stream().anyMatch(existingBranch -> existingBranch.getBranchId().equals(newBranch.getBranchId()))) {
+            throw BranchException.branchAlreadyExistsWithThisId();
+        }
         ContactInfo savedContactInfo = this.contactRepository.save(newBranch.getContactInfo());
         newBranch.setContactInfo(savedContactInfo);
         BranchModel savedBranch = this.branchRepository.save(newBranch);

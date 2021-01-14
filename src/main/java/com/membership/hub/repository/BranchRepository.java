@@ -46,7 +46,7 @@ public class BranchRepository {
         return newBranch;
     }
 
-    public void updateAmount(String branchId, Double paymentAmount) {
+    public boolean updateAmount(String branchId, Double paymentAmount) {
         String sqlUpdateAmount =
                 "UPDATE branches " +
                 "SET totalAmount = totalAmount + :paymentAmount " +
@@ -55,7 +55,8 @@ public class BranchRepository {
                 .addValue("branch_id", branchId)
                 .addValue("paymentAmount", paymentAmount);
 
-        template.update(sqlUpdateAmount, parameters);
+        int count = template.update(sqlUpdateAmount, parameters);
+        return count == 1;
     }
 
     public Optional<BranchModel> findById(String id) {
@@ -66,8 +67,8 @@ public class BranchRepository {
                         "WHERE branch_id = :branch_id;";
         MapSqlParameterSource parameters = new MapSqlParameterSource().addValue("branch_id", id);
 
-        BranchModel fetchedBranch = template.queryForObject(sqlFind, parameters, branchMapper);
-        return fetchedBranch != null ? Optional.of(fetchedBranch) : Optional.empty();
+        List<BranchModel> fetchedBranch = template.query(sqlFind, parameters, branchMapper);
+        return getBranchFromResultSet(fetchedBranch);
     }
 
     public List<BranchModel> findAll() {
@@ -89,6 +90,15 @@ public class BranchRepository {
             return existingBranch;
         }
         return Optional.empty();
+    }
+
+    private Optional<BranchModel> getBranchFromResultSet(List<BranchModel> branches) {
+        if (branches  != null && !branches.isEmpty()) {
+            return Optional.of(branches.get(0));
+        }
+        else {
+            return Optional.empty();
+        }
     }
 
     private final RowMapper<BranchModel> branchMapper = (resultSet, i) -> {

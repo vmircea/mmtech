@@ -1,7 +1,14 @@
 package com.membership.hub.model.shared;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import static com.membership.hub.model.shared.Pattern.RO_PHONE_NUMBER;
+
 public class ContactInfo {
     private int id;
+    @NotNull
+    @Pattern(regexp = RO_PHONE_NUMBER, message = "phone number must be a valid Ro number")
     private String phoneNumber;
     private String emailAddress;
     private String country;

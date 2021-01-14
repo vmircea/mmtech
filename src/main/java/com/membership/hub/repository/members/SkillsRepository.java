@@ -1,4 +1,4 @@
-package com.membership.hub.repository;
+package com.membership.hub.repository.members;
 
 import com.membership.hub.model.membership.MemberSkill;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +20,14 @@ public class SkillsRepository {
         template = new NamedParameterJdbcTemplate(dataSource);
     }
 
-    public Optional<List<MemberSkill>> findById(String id) {
+    public List<MemberSkill> findById(String id) {
         MapSqlParameterSource parameters = new MapSqlParameterSource().addValue("member_id", id);
         String sqlFetch =
                 "SELECT skillName " +
                 "FROM skills " +
                 "WHERE member_id =:member_id";
         List<MemberSkill> list = template.query(sqlFetch, parameters, skillsMapper);
-        return list != null ? Optional.of(list) : Optional.empty();
+        return list;
     }
 
     public void save(MemberSkill skill, String id) {

@@ -31,4 +31,12 @@ public class MembershipFeeModel {
     public void setPaidInAmount(Double paidInAmount) {
         this.paidInAmount = paidInAmount;
     }
+
+    @Override
+    public String toString() {
+        return "MembershipFeeModel{" +
+                "paidInDate=" + paidInDate +
+                ", paidInAmount=" + paidInAmount +
+                '}';
+    }
 }

@@ -9,6 +9,9 @@ public class PaymentModel {
     private LocalDate date;
     private String description;
 
+    public PaymentModel() {
+    }
+
     public PaymentModel(String senderId, String receiverId, Double amount, LocalDate date, String description) {
         this.senderId = senderId;
         this.receiverId = receiverId;

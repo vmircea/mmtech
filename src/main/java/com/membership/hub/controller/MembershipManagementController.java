@@ -1,27 +1,29 @@
 package com.membership.hub.controller;
 
 import com.membership.hub.dto.MembershipAddedRequest;
-import com.membership.hub.mapper.BranchModelMapper;
+import com.membership.hub.dto.MembershipUpdatedRequest;
+import com.membership.hub.exception.MembershipException;
 import com.membership.hub.mapper.MembershipFeeMapper;
 import com.membership.hub.mapper.MembershipMapper;
-import com.membership.hub.model.branch.BranchModel;
 import com.membership.hub.model.membership.MemberSkill;
 import com.membership.hub.model.membership.Membership;
 import com.membership.hub.model.membership.MembershipFeeModel;
 import com.membership.hub.service.MembershipService;
+import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @Validated
-@RequestMapping("/api")
+@RequestMapping("/memberships")
+@Api(value = "/memberships",
+        tags = "Memberships")
 public class MembershipManagementController {
 
     private final MembershipService membershipService;
@@ -34,15 +36,28 @@ public class MembershipManagementController {
         this.membershipFeeMapper = membershipFeeMapper;
     }
 
-    @GetMapping("/members/{id}")
+    /**
+     *  Membership Basics:
+     */
+
+    @ApiOperation(value = "Get Membership by ID",
+            notes = "Fetch a membership from DB based on the path ID.")
+    @GetMapping("/{id}")
     public ResponseEntity<Membership> getMembership(
             @PathVariable String id
     ) {
         Optional<Membership> membership = membershipService.getMembership(id);
-        return membership.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if(membership.isPresent()) {
+            return ResponseEntity.ok(membership.get());
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @GetMapping("/members")
+    @ApiOperation(value = "Get all Memberships",
+            notes = "Fetch all memberships from DB.")
+    @GetMapping
     public ResponseEntity<List<Membership>> getMemberships() {
         List<Membership> memberships = membershipService.getMemberships();
 
@@ -54,7 +69,9 @@ public class MembershipManagementController {
         }
     }
 
-    @GetMapping("/members/byBranch/{id}")
+    @ApiOperation(value = "Get all Memberships By Branch Id",
+            notes = "Fetch all memberships which belong to a certain branch based on the branch ID.")
+    @GetMapping("/byBranch/{id}")
     public ResponseEntity<List<Membership>> getMembershipsByBranchId(@PathVariable String id) {
         List<Membership> memberships = membershipService.getMembershipsByBranchId(id);
 
@@ -66,9 +83,17 @@ public class MembershipManagementController {
         }
     }
 
-    @PostMapping("/members")
+    @ApiOperation(value = "Add a new Membership",
+            notes = "Add a new Membership based on the information received in the request")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "The Membership was successfully added based on the received request"),
+            @ApiResponse(code = 500, message = "Membership cannot be added because already exists"),
+            @ApiResponse(code = 400, message = "Validation error on the received request")
+    })
+    @PostMapping
     public ResponseEntity<Membership> addNewMembership(
             @Valid
+            @ApiParam(name = "membership", value = "Membership Basic details", required = true)
             @RequestBody MembershipAddedRequest memberRequest
     ) {
         Membership newMembership = this.membershipMapper.membershipRequestToMembership(memberRequest);
@@ -79,24 +104,32 @@ public class MembershipManagementController {
                 .body(createdMembership);
     }
 
-    @PutMapping("/members/{id}")
+    @ApiOperation(value = "Update a Membership",
+            notes = "Update the basic details of a membership based on the member ID.")
+    @PutMapping("/{id}")
     public ResponseEntity<Void> updateMembership(
             @PathVariable String id,
-            @Valid @RequestBody MembershipAddedRequest memberRequest
+            @Valid @RequestBody MembershipUpdatedRequest memberRequest
     ) {
+        if (!memberRequest.getId().equals(id)) {
+            throw MembershipException.membershipBodyIdNotCorrespondsWithPathId();
+        }
+
         Optional<Membership> existingMembership = membershipService.getMembership(id);
         if(existingMembership.isPresent()) {
-            Membership newMembership = this.membershipMapper.membershipRequestToMembership(memberRequest);
+            Membership newMembership = this.membershipMapper.membershipUpdatedRequestToMembership(memberRequest);
             existingMembership.get().update(newMembership);
             membershipService.updateMembership(existingMembership.get());
             return ResponseEntity.noContent().build();
         }
         else {
-            return ResponseEntity.notFound().build();
+            throw MembershipException.membershipNotFound();
         }
     }
 
-    @PatchMapping("/members/{id}")
+    @ApiOperation(value = "Patch a Membership",
+            notes = "Patch the basic details of a membership based on the member ID.")
+    @PatchMapping("/{id}")
     public ResponseEntity<Void> patchMembership(
             @PathVariable String id,
             @Valid @RequestBody MembershipAddedRequest memberRequest
@@ -109,10 +142,16 @@ public class MembershipManagementController {
             return ResponseEntity.noContent().build();
         }
         else {
-            return ResponseEntity.notFound().build();
+            throw MembershipException.membershipNotFound();
         }
     }
 
+    /**
+     *  Skills:
+     */
+
+    @ApiOperation(value = "Add skills to a member",
+            notes = "Add some skills from a list to a certain member.")
     @PostMapping("/skills/{id}")
     public ResponseEntity<Void> addSkills(
             @PathVariable String id,
@@ -121,24 +160,38 @@ public class MembershipManagementController {
         Optional<Membership> existingMembership = membershipService.getMembership(id);
         if(existingMembership.isPresent()) {
             membershipService.addSkillsToMember(skillsRequest, id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
         }
         else {
-            return ResponseEntity.notFound().build();
+            throw MembershipException.membershipNotFound();
         }
     }
 
+    @ApiOperation(value = "Get skills of a member",
+            notes = "Get all skills of a certain member.")
     @GetMapping("/skills/{id}")
     public ResponseEntity<List<MemberSkill>> getSkillsOfMember(@PathVariable String id) {
-        List<MemberSkill> list = membershipService.getSkillsById(id);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
+        Optional<Membership> membership = membershipService.getMembership(id);
+        if(membership.isPresent()) {
+            List<MemberSkill> list = membership.get().getSkills();
+            if (list.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            else {
+                return ResponseEntity.ok(list);
+            }
         }
         else {
-            return ResponseEntity.ok(list);
+            throw MembershipException.membershipNotFound();
         }
     }
 
+    /**
+     *  Fees:
+     */
+
+    @ApiOperation(value = "Pay a membership fee of a member",
+            notes = "Add membership fee to the DB.")
     @PostMapping("/fees/{id}")
     public ResponseEntity<Void> addMembershipFee(
             @PathVariable String id,
@@ -147,23 +200,30 @@ public class MembershipManagementController {
         MembershipFeeModel newFeeAdded = this.membershipFeeMapper.membershipFeeRequestToMembershipFeeModel(paidInAmount);
         Optional<Membership> existingMembership = membershipService.getMembership(id);
         if(existingMembership.isPresent()) {
-            membershipService.addFeeToMember(newFeeAdded, id);
-            return ResponseEntity.noContent().build();
+            membershipService.addFeeToMember(newFeeAdded, existingMembership.get());
+            return ResponseEntity.ok().build();
         }
         else {
-            return ResponseEntity.notFound().build();
+            throw MembershipException.membershipNotFound();
         }
     }
 
+    @ApiOperation(value = "Fetch fees of a member",
+            notes = "Get the history of membership fee payments of a member.")
     @GetMapping("/fees/{id}")
     public ResponseEntity<List<MembershipFeeModel>> getFeesOfMember(@PathVariable String id) {
-        List<MembershipFeeModel> list = membershipService.getFeesById(id);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
+        Optional<Membership> membership = membershipService.getMembership(id);
+        if (membership.isPresent()) {
+            List<MembershipFeeModel> list = membership.get().getPaidInFeeDetails();
+            if (list.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            else {
+                return ResponseEntity.ok(list);
+            }
         }
         else {
-            return ResponseEntity.ok(list);
+            throw MembershipException.membershipNotFound();
         }
     }
-
 }

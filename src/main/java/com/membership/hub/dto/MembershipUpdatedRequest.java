@@ -1,8 +1,8 @@
 package com.membership.hub.dto;
 
-import com.membership.hub.model.shared.ContactInfo;
 import com.membership.hub.model.membership.MemberProfession;
 import com.membership.hub.model.membership.MemberStatus;
+import com.membership.hub.model.shared.ContactInfo;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -11,7 +11,10 @@ import javax.validation.constraints.Pattern;
 
 import static com.membership.hub.model.shared.Pattern.BRANCH_ID;
 
-public class MembershipAddedRequest {
+public class MembershipUpdatedRequest {
+    @NotNull
+    @NotBlank
+    private String id;
     @NotNull
     @NotBlank
     private String name;
@@ -24,6 +27,9 @@ public class MembershipAddedRequest {
     @Valid
     private ContactInfo contactInfo;
 
+    public String getId() {
+        return id;
+    }
     public String getName() {
         return name;
     }
