@@ -5,7 +5,7 @@ import com.membership.hub.dto.MembershipUpdatedRequest;
 import com.membership.hub.exception.MembershipException;
 import com.membership.hub.mapper.MembershipFeeMapper;
 import com.membership.hub.mapper.MembershipMapper;
-import com.membership.hub.model.membership.MemberSkill;
+import com.membership.hub.model.shared.Skills;
 import com.membership.hub.model.membership.Membership;
 import com.membership.hub.model.membership.MembershipFeeModel;
 import com.membership.hub.service.MembershipService;
@@ -132,7 +132,7 @@ public class MembershipManagementController {
     @PatchMapping("/{id}")
     public ResponseEntity<Void> patchMembership(
             @PathVariable String id,
-            @Valid @RequestBody MembershipAddedRequest memberRequest
+            @RequestBody MembershipAddedRequest memberRequest
     ) {
         Optional<Membership> existingMembership = membershipService.getMembership(id);
         if (existingMembership.isPresent()) {
@@ -155,7 +155,7 @@ public class MembershipManagementController {
     @PostMapping("/skills/{id}")
     public ResponseEntity<Void> addSkills(
             @PathVariable String id,
-            @RequestBody List<MemberSkill> skillsRequest
+            @RequestBody List<Skills> skillsRequest
     ) {
         Optional<Membership> existingMembership = membershipService.getMembership(id);
         if(existingMembership.isPresent()) {
@@ -170,10 +170,10 @@ public class MembershipManagementController {
     @ApiOperation(value = "Get skills of a member",
             notes = "Get all skills of a certain member.")
     @GetMapping("/skills/{id}")
-    public ResponseEntity<List<MemberSkill>> getSkillsOfMember(@PathVariable String id) {
+    public ResponseEntity<List<Skills>> getSkillsOfMember(@PathVariable String id) {
         Optional<Membership> membership = membershipService.getMembership(id);
         if(membership.isPresent()) {
-            List<MemberSkill> list = membership.get().getSkills();
+            List<Skills> list = membership.get().getSkills();
             if (list.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }

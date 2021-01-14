@@ -7,6 +7,7 @@ import com.membership.hub.model.branch.BranchModel;
 import com.membership.hub.model.membership.*;
 import com.membership.hub.model.shared.ContactInfo;
 import com.membership.hub.model.shared.PaymentModel;
+import com.membership.hub.model.shared.Skills;
 import com.membership.hub.repository.*;
 
 import com.membership.hub.repository.members.MembershipRepository;
@@ -59,8 +60,8 @@ public class MembershipServiceTest {
     private static List<Membership> existingMemberships;
     private static List<Membership> comparingMemberships;
 
-    private static ArrayList<MemberSkill> listSkills;
-    private static ArrayList<MemberSkill> emptySkillsList;
+    private static ArrayList<Skills> listSkills;
+    private static ArrayList<Skills> emptySkillsList;
 
     private static ArrayList<MembershipFeeModel> listFees;
     private static ArrayList<MembershipFeeModel> emptyFeesList;
@@ -110,8 +111,8 @@ public class MembershipServiceTest {
 
         // Skills
         listSkills = new ArrayList<>();
-        listSkills.add(MemberSkill.CODING);
-        listSkills.add(MemberSkill.MARKETING);
+        listSkills.add(Skills.CODING);
+        listSkills.add(Skills.MARKETING);
         emptySkillsList = new ArrayList<>();
 
         // Fees
@@ -253,7 +254,7 @@ public class MembershipServiceTest {
         String id = "b9462fdc-2f01-4f02-bbc3-ba433572a411";
         when(skillsRepository.findById(id)).thenReturn(listSkills);
 
-        List<MemberSkill> result = membershipService.getSkillsById(id);
+        List<Skills> result = membershipService.getSkillsById(id);
 
         assertEquals(listSkills.get(0), result.get(0));
         assertEquals(listSkills.get(1), result.get(1));
@@ -264,7 +265,7 @@ public class MembershipServiceTest {
         String id = "b9462fdc-2f01-4f02-bbc3-ba433572a411";
         when(skillsRepository.findById(id)).thenReturn(emptySkillsList);
 
-        List<MemberSkill> result = membershipService.getSkillsById(id);
+        List<Skills> result = membershipService.getSkillsById(id);
 
         assertTrue(result.isEmpty());
     }

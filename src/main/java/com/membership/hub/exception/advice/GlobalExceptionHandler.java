@@ -3,6 +3,7 @@ package com.membership.hub.exception.advice;
 import com.membership.hub.exception.BranchException;
 import com.membership.hub.exception.MembershipException;
 import com.membership.hub.exception.PaymentException;
+import com.membership.hub.exception.ProjectException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
         if (exception.getError() == PaymentException.PaymentErrors.BAD_CREDENTIALS) {
             return new ResponseEntity<>("Exception: " + exception.getError(), HttpStatus.UNAUTHORIZED);
         }
+        return new ResponseEntity<>("Exception: " + exception.getError(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({ProjectException.class})
+    public final ResponseEntity<String> handleProjectExceptions(ProjectException exception, WebRequest request) {
         return new ResponseEntity<>("Exception: " + exception.getError(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

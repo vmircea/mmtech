@@ -33,8 +33,8 @@ public class MmtechApplication {
      * 19. (DONE) Controller Integration Test.
      * 20. (DONE) Validation.
      * 21. (DONE) Documentation.
-     * 22. (NOT DONE) Implement a new model called Project (id, name, description, List<MemberSkill>) + REST API + DB
-     * 23. (NOT DONE) Fetch all the members which have at least one skill associated with one project
+     * 22. (DONE) Implement a new model called Project (id, name, description, List<MemberSkill>) + REST API + DB
+     * 23. (DONE) Fetch all the members which have at least one skill associated with one project
      * 24. (NOT DONE) Unit Testing for Project. Integration Test for ProjectService.
      *
      * 25. (NOT DONE) Implement Blacklist model + REST API + service + repo + DB. Do not allow adding new members if blacklisted

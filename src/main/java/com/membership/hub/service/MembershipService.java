@@ -4,7 +4,7 @@ import com.membership.hub.exception.BranchException;
 import com.membership.hub.exception.MembershipException;
 import com.membership.hub.mapper.PaymentModelFactory;
 import com.membership.hub.model.branch.BranchModel;
-import com.membership.hub.model.membership.MemberSkill;
+import com.membership.hub.model.shared.Skills;
 import com.membership.hub.model.membership.Membership;
 import com.membership.hub.model.membership.MembershipFeeModel;
 import com.membership.hub.model.shared.PaymentModel;
@@ -56,7 +56,7 @@ public class MembershipService {
     public Optional<Membership> getMembership(String id) {
         Optional<Membership> membership = this.membershipRepository.findById(id);
 
-        List<MemberSkill> skills = this.getSkillsById(id);
+        List<Skills> skills = this.getSkillsById(id);
         if(!skills.isEmpty()) {
             membership.get().setSkills(skills);
         }
@@ -82,10 +82,10 @@ public class MembershipService {
         membershipRepository.save(membership);
     }
 
-    public void addSkillsToMember(List<MemberSkill> skillsRequest, String id) {
+    public void addSkillsToMember(List<Skills> skillsRequest, String id) {
         skillsRequest.forEach(skill -> skillsRepository.save(skill, id));
     }
-    public List<MemberSkill> getSkillsById(String id) {
+    public List<Skills> getSkillsById(String id) {
         return skillsRepository.findById(id);
     }
 
@@ -116,7 +116,7 @@ public class MembershipService {
 
     private List<Membership> addSkillsAndFees(List<Membership> listMembership) {
         listMembership.forEach(membership -> {
-            List<MemberSkill> skills = this.getSkillsById(membership.getId());
+            List<Skills> skills = this.getSkillsById(membership.getId());
             List<MembershipFeeModel> fees = this.getFeesById(membership.getId());
             membership.setSkills(skills);
             membership.setPaidInFeeDetails(fees);

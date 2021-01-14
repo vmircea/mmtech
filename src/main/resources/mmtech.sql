@@ -120,5 +120,38 @@ CREATE TABLE payments (
 );
 DROP TABLE payments;
 
+CREATE TABLE projects (
+	project_id char(12) NOT NULL,
+    name char(20) NOT NULL,
+    status char(15),
+    description char(150),
+    amount DOUBLE,
+    PRIMARY KEY(project_id)
+);
+DROP TABLE projects;
 
+CREATE TABLE ProjectSkills (
+	skillName char(50) NOT NULL,
+    project_id char(12) NOT NULL,
+    KEY `projectFK` (`project_id`),
+	CONSTRAINT `projectFK` FOREIGN KEY (`project_id`) REFERENCES `projects` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+DROP TABLE ProjectSkills;
+
+INSERT INTO projects (project_id, name, status, description, amount) 
+VALUES ("PROJECT-0001", "Project No 1", "NEW", "First Project Description", 0);
+
+SELECT project_id, name, status
+FROM projects;
+
+CREATE TABLE projectMembers (
+	project_id char(12) NOT NULL,
+    member_id char(36) NOT NULL,
+    KEY `projectForMembersFK` (`project_id`),
+	CONSTRAINT `projectForMembersFK` FOREIGN KEY (`project_id`) REFERENCES `projects` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    KEY `membershipFK` (`member_id`),
+    CONSTRAINT `membershipFK` FOREIGN KEY (`member_id`) REFERENCES `MEMBERSHIP` (`member_id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+DELETE FROM projectMembers WHERE project_id = "PROJECT-0003";
 

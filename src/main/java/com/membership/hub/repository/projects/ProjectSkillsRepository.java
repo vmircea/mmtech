@@ -1,4 +1,4 @@
-package com.membership.hub.repository.members;
+package com.membership.hub.repository.projects;
 
 import com.membership.hub.model.shared.Skills;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 import java.util.List;
 
 @Repository
-public class SkillsRepository {
+public class ProjectSkillsRepository {
     private NamedParameterJdbcTemplate template;
 
     @Autowired
@@ -19,34 +19,31 @@ public class SkillsRepository {
         template = new NamedParameterJdbcTemplate(dataSource);
     }
 
-    public List<Skills> findById(String id) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource().addValue("member_id", id);
-        String sqlFetch =
-                "SELECT skillName " +
-                "FROM skills " +
-                "WHERE member_id =:member_id";
-        List<Skills> list = template.query(sqlFetch, parameters, skillsMapper);
-        return list;
-    }
-
-    public void save(Skills skill, String id) {
+    public void save(Skills skill, String projectId) {
         String sqlUpdateSkill =
-                "UPDATE skills " +
-                "SET skillName =:skill, member_id =:member_id " +
-                "WHERE member_id =:member_id " +
-                "AND skillName =:skill";
+                        "UPDATE ProjectSkills " +
+                        "SET skillName =:skill, project_id =:project_id " +
+                        "WHERE project_id =:project_id " +
+                        "AND skillName =:skill";
         String sqlAddSkill =
-                "INSERT INTO skills (skillName, member_id) " +
-                "VALUES (:skill, :member_id)";
+                        "INSERT INTO ProjectSkills (skillName, project_id) " +
+                        "VALUES (:skill, :project_id)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("skill", skill.toString())
-                .addValue("member_id", id);
+                .addValue("project_id", projectId);
 
         int count = template.update(sqlUpdateSkill, parameters);
         if (count == 0) {
             template.update(sqlAddSkill, parameters);
         }
+    }
+
+    public List<Skills> findById(String projectId) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource().addValue("project_id", projectId);
+        String sqlFetch = "SELECT skillName FROM ProjectSkills WHERE project_id=:project_id";
+
+        return template.query(sqlFetch, parameters, skillsMapper);
     }
 
     private final RowMapper<Skills> skillsMapper = (resultSet, i) -> {

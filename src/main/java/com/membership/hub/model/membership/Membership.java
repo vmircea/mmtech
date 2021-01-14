@@ -1,6 +1,7 @@
 package com.membership.hub.model.membership;
 
 import com.membership.hub.model.shared.ContactInfo;
+import com.membership.hub.model.shared.Skills;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class Membership {
     private MemberStatus status;
     private MemberProfession profession;
     private ContactInfo contactInfo;
-    private List<MemberSkill> skills;
+    private List<Skills> skills;
     private List<MembershipFeeModel> paidInFeeDetails;
 
     public Membership(String name, String branchId, int age, MemberStatus status, MemberProfession profession, ContactInfo contactInfo) {
@@ -78,11 +79,11 @@ public class Membership {
         this.contactInfo = contactInfo;
     }
 
-    public List<MemberSkill> getSkills() {
+    public List<Skills> getSkills() {
         return skills;
     }
 
-    public void setSkills(List<MemberSkill> skills) {
+    public void setSkills(List<Skills> skills) {
         this.skills = skills;
     }
 
