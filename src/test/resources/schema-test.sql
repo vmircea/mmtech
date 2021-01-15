@@ -50,6 +50,16 @@ INSERT INTO CONTACTINFO VALUES (
     '24'
 );
 
+INSERT INTO CONTACTINFO VALUES (
+	2,
+	'+40796859472',
+    'marry.brown@gmail.com',
+    'United Kingdom',
+    'London',
+    'ParkWay 16',
+    '24'
+);
+
 INSERT INTO membership VALUES (
 	'4e48d7a8-64b9-4455-a37f-903fd62def32',
     'John Doe',
@@ -63,8 +73,8 @@ INSERT INTO membership VALUES (
 INSERT INTO branches (branch_id, branch_name, admin_id, contactInfo_id, totalAmount)
 VALUES (
     'XX-TTT-0000',
-    '4e48d7a8-64b9-4455-a37f-903fd62def32',
     'Test Name No 3',
+    '4e48d7a8-64b9-4455-a37f-903fd62def32',
     1,
     150.0
 );
@@ -72,8 +82,8 @@ VALUES (
 INSERT INTO branches (branch_id, branch_name, admin_id, contactInfo_id, totalAmount)
 VALUES (
     'ZZ-TTT-0000',
-    '4e48d7a8-64b9-4455-a37f-903fd62def32',
     'Test Name No 4',
+    '4e48d7a8-64b9-4455-a37f-903fd62def32',
     1,
     0.0
 );

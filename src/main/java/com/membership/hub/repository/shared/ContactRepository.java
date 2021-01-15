@@ -48,7 +48,7 @@ public class ContactRepository {
             contactInfo.setId(Objects.requireNonNull(generatedKeyHolder.getKey()).intValue());
         }
 
-        return this.findByPhoneNumber(contactInfo.getPhoneNumber()).get();
+        return contactInfo;
     }
 
     public Optional<ContactInfo> findByPhoneNumber(String phoneNumber) {

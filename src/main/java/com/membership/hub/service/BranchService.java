@@ -24,6 +24,7 @@ public class BranchService {
         if (branchRepository.findAll().stream().anyMatch(existingBranch -> existingBranch.getBranchId().equals(newBranch.getBranchId()))) {
             throw BranchException.branchAlreadyExistsWithThisId();
         }
+        System.out.println(newBranch.getContactInfo());
         ContactInfo savedContactInfo = this.contactRepository.save(newBranch.getContactInfo());
         newBranch.setContactInfo(savedContactInfo);
         return this.branchRepository.save(newBranch);

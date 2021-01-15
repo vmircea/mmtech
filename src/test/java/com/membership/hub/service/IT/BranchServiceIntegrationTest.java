@@ -4,6 +4,8 @@ import com.membership.hub.exception.BranchException;
 import com.membership.hub.model.branch.BranchModel;
 import com.membership.hub.model.shared.ContactInfo;
 import com.membership.hub.repository.BranchRepository;
+import com.membership.hub.repository.members.MembershipRepository;
+import com.membership.hub.repository.shared.ContactRepository;
 import com.membership.hub.service.BranchService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,8 @@ public class BranchServiceIntegrationTest {
     private BranchService service;
     @Autowired
     private BranchRepository branchRepository;
+    @Autowired
+    private MembershipRepository membershipRepository;
 
     private static BranchModel branchModel;
     private static BranchModel branchModelFromDB;
@@ -56,47 +60,51 @@ public class BranchServiceIntegrationTest {
                 contactInfo,
                 0.0
         );
-        contactInfoForComparing = contactInfo;
-        contactInfoForComparing.setId(1);
+        contactInfoForComparing = new ContactInfo(
+                0,
+                "+40700999000",
+                "new@test.com",
+                "CountryTest",
+                "CityTest",
+                "StreetTest",
+                "BuildingTest"
+        );
+//        contactInfoForComparing.setId(0);
     }
 
     @Test
     public void createNewBranchHappyFlow() {
-            BranchModel result = service.createNewBranch(branchModel);
+        BranchModel result = service.createNewBranch(branchModel);
 
-            assertEquals(branchModel.getBranchId(), result.getBranchId());
-            assertEquals(branchModel.getBranchName(), result.getBranchName());
-            assertEquals(branchModel.getAdminId(), result.getAdminId());
-            assertEquals(contactInfoForComparing.getId(), result.getContactInfo().getId());
-            assertEquals(contactInfoForComparing.getPhoneNumber(), result.getContactInfo().getPhoneNumber());
-            assertEquals(contactInfoForComparing.getEmailAddress(), result.getContactInfo().getEmailAddress());
-            assertEquals(contactInfoForComparing.getCountry(), result.getContactInfo().getCountry());
-            assertEquals(contactInfoForComparing.getCity(), result.getContactInfo().getCity());
-            assertEquals(contactInfoForComparing.getStreet(), result.getContactInfo().getStreet());
-            assertEquals(contactInfoForComparing.getBuilding(), result.getContactInfo().getBuilding());
+        assertEquals(branchModel.getBranchId(), result.getBranchId());
+        assertEquals(branchModel.getBranchName(), result.getBranchName());
+        assertEquals(branchModel.getAdminId(), result.getAdminId());
+        assertEquals(contactInfoForComparing.getId(), result.getContactInfo().getId());
+        assertEquals(contactInfoForComparing.getPhoneNumber(), result.getContactInfo().getPhoneNumber());
+        assertEquals(contactInfoForComparing.getEmailAddress(), result.getContactInfo().getEmailAddress());
+        assertEquals(contactInfoForComparing.getCountry(), result.getContactInfo().getCountry());
+        assertEquals(contactInfoForComparing.getCity(), result.getContactInfo().getCity());
+        assertEquals(contactInfoForComparing.getStreet(), result.getContactInfo().getStreet());
+        assertEquals(contactInfoForComparing.getBuilding(), result.getContactInfo().getBuilding());
     }
 
     @Test
     public void createNewBranchWhenExists() {
-        branchRepository.save(branchModel);
-
         BranchException exception = assertThrows(
                 BranchException.class,
-                () -> service.createNewBranch(branchModel));
+                () -> service.createNewBranch(branchModelFromDB));
 
         assertEquals(BranchException.BranchErrors.BRANCH_ALREADY_EXISTS_WITH_ID, exception.getError());
     }
 
     @Test
     public void getBranchWhenExists() {
-        branchRepository.save(branchModel);
-
-        Optional<BranchModel> result = service.getBranch(branchModel.getBranchId());
+        Optional<BranchModel> result = service.getBranch(branchModelFromDB.getBranchId());
 
         assertTrue(result.isPresent());
-        assertEquals(branchModel.getBranchId(), result.get().getBranchId());
-        assertEquals(branchModel.getBranchName(), result.get().getBranchName());
-        assertEquals(branchModel.getAdminId(), result.get().getAdminId());
+        assertEquals(branchModelFromDB.getBranchId(), result.get().getBranchId());
+        assertEquals(branchModelFromDB.getBranchName(), result.get().getBranchName());
+        assertEquals(branchModelFromDB.getAdminId(), result.get().getAdminId());
     }
 
     @Test
@@ -123,14 +131,12 @@ public class BranchServiceIntegrationTest {
 
     @Test
     public void deleteBranchWhenExists() {
-        branchRepository.save(branchModel);
-
-        Optional<BranchModel> result = service.deleteBranch(branchModel.getBranchId());
+        Optional<BranchModel> result = service.deleteBranch(branchModelFromDB.getBranchId());
 
         assertTrue(result.isPresent());
-        assertEquals(branchModel.getBranchName(), result.get().getBranchName());
-        assertEquals(branchModel.getAdminId(), result.get().getAdminId());
-        assertEquals(branchModel.getBranchId(), result.get().getBranchId());
+        assertEquals(branchModelFromDB.getBranchName(), result.get().getBranchName());
+        assertEquals(branchModelFromDB.getAdminId(), result.get().getAdminId());
+        assertEquals(branchModelFromDB.getBranchId(), result.get().getBranchId());
     }
 
 }
