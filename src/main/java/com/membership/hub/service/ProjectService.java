@@ -41,23 +41,22 @@ public class ProjectService {
 
     public Optional<ProjectModel> getProjectById(String projectId) {
         Optional<ProjectModel> fetchedProject = this.projectRepository.findById(projectId);
-        List<Skills> fetchedSkills = this.projectSkillsRepository.findById(projectId);
-        if (fetchedProject.isPresent()) {
-            List<String> membersId = this.projectMembersRepository.findMembersIdOfProject(projectId);
-            List<Membership> membersOfProject = new ArrayList<>();
-            membersId.forEach(memberId -> {
-                Optional<Membership> existingMembership = this.membershipService.getMembership(memberId);
-                if (existingMembership.isPresent()) {
-                    membersOfProject.add(existingMembership.get());
-                }
-            });
-            fetchedProject.get().setSkills(fetchedSkills);
-            fetchedProject.get().setProjectMembers(membersOfProject);
-            return fetchedProject;
-        }
-        else {
+        if (fetchedProject.isEmpty()) {
             return Optional.empty();
         }
+        // Fetch members who work for this project to a list.
+        List<String> membersId = this.projectMembersRepository.findMembersIdOfProject(projectId);
+        List<Membership> membersOfProject = new ArrayList<>();
+        membersId.forEach(memberId -> {
+            Optional<Membership> existingMembership = this.membershipService.getMembership(memberId);
+            existingMembership.ifPresent(membersOfProject::add);
+        });
+        // Fetch skills required for this project.
+        List<Skills> fetchedSkills = this.projectSkillsRepository.findById(projectId);
+        // Add members and skills to the ProjectModel.
+        fetchedProject.get().setSkills(fetchedSkills);
+        fetchedProject.get().setProjectMembers(membersOfProject);
+        return fetchedProject;
     }
 
     public List<ProjectModel> getProjects() {
@@ -75,38 +74,29 @@ public class ProjectService {
     }
 
     public String addMemberToProject(String memberId, String projectId) {
-        Optional<Membership> existingMembership = this.membershipService.getMembership(memberId);
-        if (existingMembership.isPresent()) {
-            Optional<ProjectModel> existingProject = getProjectById(projectId);
-            if (existingProject.isPresent()) {
-                if (!existingProject.get().getStatus().equals(ProjectStatus.COMPLETED) && !existingProject.get().getStatus().equals(ProjectStatus.ONHOLD)) {
-                    boolean memberHasRequiredSkills = existingMembership.get().getSkills().stream()
-                            .anyMatch(eachSkillOfMember -> existingProject.get().getSkills().contains(eachSkillOfMember));
-                    if (memberHasRequiredSkills) {
-                        if (this.projectMembersRepository.save(memberId, projectId)) {
-                            return String.format(
-                                    "Member with name %s was added to project with name %s",
-                                    existingMembership.get().getName(),
-                                    existingProject.get().getName());
-                        }
-                        else {
-                            throw ProjectException.noMemberWasAddedBecauseAlreadyExists();
-                        }
-                    }
-                    else {
-                        throw ProjectException.memberDoesNotHaveRequiredSkills();
-                    }
-                }
-                else {
-                    throw ProjectException.projectStateIsNotOpenForMembers();
-                }
-            }
-            else {
-                throw ProjectException.projectNotFound();
-            }
-        }
-        else {
+        Optional<Membership> existingMembership = membershipService.getMembership(memberId);
+        if (existingMembership.isEmpty()) {
             throw MembershipException.membershipNotFound();
         }
+        Optional<ProjectModel> existingProject = this.getProjectById(projectId);
+        if (existingProject.isEmpty()) {
+            throw ProjectException.projectNotFound();
+        }
+        if (existingProject.get().getStatus().equals(ProjectStatus.COMPLETED)
+           || existingProject.get().getStatus().equals(ProjectStatus.ONHOLD)) {
+            throw ProjectException.projectStateIsNotOpenForMembers();
+        }
+        boolean memberHasRequiredSkills = existingMembership.get().getSkills().stream()
+                .anyMatch(eachSkillOfMember -> existingProject.get().getSkills().contains(eachSkillOfMember));
+        if (!memberHasRequiredSkills) {
+            throw ProjectException.memberDoesNotHaveRequiredSkills();
+        }
+        if (!this.projectMembersRepository.save(memberId, projectId)) {
+            throw ProjectException.noMemberWasAddedBecauseAlreadyExists();
+        }
+        return String.format(
+                "Member with name %s was added to project with name %s",
+                existingMembership.get().getName(),
+                existingProject.get().getName());
     }
 }

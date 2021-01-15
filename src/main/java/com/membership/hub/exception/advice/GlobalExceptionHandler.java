@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +57,15 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
         apiError.setMessage("Violation of some constraint of input variables");
         apiError.setException(buildExceptionMessage);
+        apiError.setPath(httpServletRequest.getRequestURI());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
+    public final ResponseEntity<Object> handleSQLConstraintViolationExceptions(SQLIntegrityConstraintViolationException exception, HttpServletRequest httpServletRequest) {
+        ApiError apiError = new ApiError(HttpStatus.CONFLICT);
+        apiError.setMessage("Violation of some SQL Constraints");
+        apiError.setException(exception.getMessage());
         apiError.setPath(httpServletRequest.getRequestURI());
         return buildResponseEntity(apiError);
     }

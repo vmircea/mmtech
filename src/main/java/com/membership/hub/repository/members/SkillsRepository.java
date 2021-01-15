@@ -23,19 +23,19 @@ public class SkillsRepository {
         MapSqlParameterSource parameters = new MapSqlParameterSource().addValue("member_id", id);
         String sqlFetch =
                 "SELECT skillName " +
-                "FROM skills " +
+                "FROM memberskills " +
                 "WHERE member_id =:member_id";
         return template.query(sqlFetch, parameters, skillsMapper);
     }
 
     public void save(Skills skill, String id) {
         String sqlUpdateSkill =
-                "UPDATE skills " +
+                "UPDATE memberskills " +
                 "SET skillName =:skill, member_id =:member_id " +
                 "WHERE member_id =:member_id " +
                 "AND skillName =:skill";
         String sqlAddSkill =
-                "INSERT INTO skills (skillName, member_id) " +
+                "INSERT INTO memberskills (skillName, member_id) " +
                 "VALUES (:skill, :member_id)";
 
         MapSqlParameterSource parameters = new MapSqlParameterSource()

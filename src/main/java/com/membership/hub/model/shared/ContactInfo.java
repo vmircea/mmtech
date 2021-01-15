@@ -96,7 +96,7 @@ public class ContactInfo {
     public void update(ContactInfo contactInfo) {
         if (contactInfo != null) {
             phoneNumber = contactInfo.getPhoneNumber();
-            emailAddress = contactInfo.getPhoneNumber();
+            emailAddress = contactInfo.getEmailAddress();
             country = contactInfo.getCountry();
             city = contactInfo.getCity();
             street = contactInfo.getStreet();
@@ -110,7 +110,7 @@ public class ContactInfo {
                 phoneNumber = contactInfo.getPhoneNumber();
             }
             if (contactInfo.getEmailAddress() != null) {
-                emailAddress = contactInfo.getPhoneNumber();
+                emailAddress = contactInfo.getEmailAddress();
             }
             if (contactInfo.getCountry() != null) {
                 country = contactInfo.getCountry();
